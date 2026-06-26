@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-06-26T18:38:17Z",
+  "generatedAt": "2026-06-26T18:49:31Z",
   "dataSource": "Derived from repository git history (offline, no external calls).",
   "mode": "offline",
   "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
   "summary": {
     "activeProcesses": 3,
-    "completedTasks": 2,
+    "completedTasks": 3,
     "pendingTasks": 0,
     "skippedNeedsPermission": 2,
-    "efficiencyPct": 84,
+    "efficiencyPct": 96,
     "uptimePct": 100.0
   },
   "processes": [
@@ -18,7 +18,7 @@
       "area": "monitoring",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:34:28Z",
+      "lastTickIso": "2026-06-26T18:40:32Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Derives live status from git history (offline-capable)."
@@ -29,7 +29,7 @@
       "area": "optimization",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:34:28Z",
+      "lastTickIso": "2026-06-26T18:40:32Z",
       "throughputPerMin": 3,
       "needsNewPermission": false,
       "note": "Scores work areas from recent commit activity."
@@ -40,7 +40,7 @@
       "area": "reporting",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:38:17Z",
+      "lastTickIso": "2026-06-26T18:49:31Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Renders this dashboard from generated status.json."
@@ -71,13 +71,20 @@
   "tasks": [
     {
       "id": "c-0",
-      "title": "Add self-contained Cowork process monitoring dashboard",
+      "title": "Add real git-derived data feed, fix Pages deploy, dashboard tweaks",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-1",
+      "title": "Add self-contained Cowork process monitoring dashboard",
+      "area": "monitoring",
+      "status": "done",
+      "needsNewPermission": false
+    },
+    {
+      "id": "c-2",
       "title": "Initial commit",
       "area": "monitoring",
       "status": "done",
@@ -108,22 +115,22 @@
     55,
     55,
     55,
-    84
+    96
   ],
   "areas": [
     {
       "name": "monitoring",
-      "score": 70,
+      "score": 80,
       "improving": true
     },
     {
       "name": "optimization",
-      "score": 60,
-      "improving": false
+      "score": 70,
+      "improving": true
     },
     {
       "name": "reporting",
-      "score": 70,
+      "score": 80,
       "improving": true
     },
     {

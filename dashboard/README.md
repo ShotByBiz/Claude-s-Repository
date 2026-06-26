@@ -33,14 +33,23 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
-## Online access (GitHub Pages)
+## Online access (CI artifact)
 
-A workflow at `.github/workflows/pages.yml` publishes the `dashboard/`
-folder. To turn it on once:
+The workflow at `.github/workflows/pages.yml` regenerates the data, validates
+the dashboard, and publishes the whole `dashboard/` folder as a downloadable
+build artifact (`cowork-dashboard`) on every push. This needs no extra plan
+or permissions and works on private repos.
 
-1. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-2. Push to the configured branch (or run the workflow manually).
-3. The dashboard URL appears in the workflow run summary.
+To view the published build:
+
+1. Open the latest **Build dashboard** run under the repo's **Actions** tab.
+2. Download the **cowork-dashboard** artifact and unzip it.
+3. Serve it locally (`python3 -m http.server` inside the folder) and open it.
+
+> GitHub Pages was intentionally dropped: Pages on a private repo requires a
+> paid plan and the CI token cannot create the Pages site. If you later enable
+> Pages (or make the repo public), swap the upload step for
+> `actions/upload-pages-artifact` + `actions/deploy-pages` to get a live URL.
 
 ## Data feed
 

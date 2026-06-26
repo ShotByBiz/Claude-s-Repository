@@ -1,14 +1,15 @@
 {
-  "generatedAt": "2026-06-26T18:32:00Z",
+  "generatedAt": "2026-06-26T18:38:17Z",
+  "dataSource": "Derived from repository git history (offline, no external calls).",
   "mode": "offline",
   "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
   "summary": {
     "activeProcesses": 3,
-    "completedTasks": 27,
-    "pendingTasks": 4,
+    "completedTasks": 2,
+    "pendingTasks": 0,
     "skippedNeedsPermission": 2,
-    "efficiencyPct": 86,
-    "uptimePct": 99.2
+    "efficiencyPct": 84,
+    "uptimePct": 100.0
   },
   "processes": [
     {
@@ -17,10 +18,10 @@
       "area": "monitoring",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:31:40Z",
-      "throughputPerMin": 12,
+      "lastTickIso": "2026-06-26T18:34:28Z",
+      "throughputPerMin": 1,
       "needsNewPermission": false,
-      "note": "Core polling loop, fully offline-capable."
+      "note": "Derives live status from git history (offline-capable)."
     },
     {
       "id": "proc-efficiency",
@@ -28,21 +29,21 @@
       "area": "optimization",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:31:20Z",
-      "throughputPerMin": 8,
+      "lastTickIso": "2026-06-26T18:34:28Z",
+      "throughputPerMin": 3,
       "needsNewPermission": false,
-      "note": "Improving existing heuristics while offline."
+      "note": "Scores work areas from recent commit activity."
     },
     {
       "id": "proc-reporter",
       "name": "Report Generator",
       "area": "reporting",
       "status": "running",
-      "health": "warn",
-      "lastTickIso": "2026-06-26T18:29:05Z",
-      "throughputPerMin": 4,
+      "health": "good",
+      "lastTickIso": "2026-06-26T18:38:17Z",
+      "throughputPerMin": 1,
       "needsNewPermission": false,
-      "note": "Slower than target; tuning batch size."
+      "note": "Renders this dashboard from generated status.json."
     },
     {
       "id": "proc-external-sync",
@@ -50,10 +51,10 @@
       "area": "integration",
       "status": "skipped",
       "health": "blocked",
-      "lastTickIso": null,
-      "throughputPerMin": 0,
       "needsNewPermission": true,
-      "note": "Skipped: requires new outbound integration permission. Deferred until online/authorized."
+      "note": "Skipped: requires new outbound integration permission. Deferred until online/authorized.",
+      "lastTickIso": null,
+      "throughputPerMin": 0
     },
     {
       "id": "proc-deploy",
@@ -61,26 +62,79 @@
       "area": "delivery",
       "status": "skipped",
       "health": "blocked",
-      "lastTickIso": null,
-      "throughputPerMin": 0,
       "needsNewPermission": true,
-      "note": "Skipped: needs deploy credentials/permission. Deferred."
+      "note": "Skipped: needs deploy credentials/permission. Deferred.",
+      "lastTickIso": null,
+      "throughputPerMin": 0
     }
   ],
   "tasks": [
-    { "id": "t-101", "title": "Refine efficiency scoring", "area": "optimization", "status": "done", "needsNewPermission": false },
-    { "id": "t-102", "title": "Harden offline polling", "area": "monitoring", "status": "done", "needsNewPermission": false },
-    { "id": "t-103", "title": "Improve report formatting", "area": "reporting", "status": "in_progress", "needsNewPermission": false },
-    { "id": "t-104", "title": "Reduce monitor memory use", "area": "monitoring", "status": "in_progress", "needsNewPermission": false },
-    { "id": "t-105", "title": "Connect new external API", "area": "integration", "status": "skipped", "needsNewPermission": true },
-    { "id": "t-106", "title": "Provision deploy target", "area": "delivery", "status": "skipped", "needsNewPermission": true }
+    {
+      "id": "c-0",
+      "title": "Add self-contained Cowork process monitoring dashboard",
+      "area": "monitoring",
+      "status": "done",
+      "needsNewPermission": false
+    },
+    {
+      "id": "c-1",
+      "title": "Initial commit",
+      "area": "monitoring",
+      "status": "done",
+      "needsNewPermission": false
+    },
+    {
+      "id": "t-ext",
+      "title": "Connect new external API",
+      "area": "integration",
+      "status": "skipped",
+      "needsNewPermission": true
+    },
+    {
+      "id": "t-dep",
+      "title": "Provision deploy target",
+      "area": "delivery",
+      "status": "skipped",
+      "needsNewPermission": true
+    }
   ],
-  "efficiencyTrend": [72, 75, 74, 78, 80, 79, 83, 85, 84, 86],
+  "efficiencyTrend": [
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    84
+  ],
   "areas": [
-    { "name": "monitoring", "score": 92, "improving": true },
-    { "name": "optimization", "score": 88, "improving": true },
-    { "name": "reporting", "score": 74, "improving": true },
-    { "name": "integration", "score": 0, "improving": false },
-    { "name": "delivery", "score": 0, "improving": false }
+    {
+      "name": "monitoring",
+      "score": 70,
+      "improving": true
+    },
+    {
+      "name": "optimization",
+      "score": 60,
+      "improving": false
+    },
+    {
+      "name": "reporting",
+      "score": 70,
+      "improving": true
+    },
+    {
+      "name": "integration",
+      "score": 0,
+      "improving": false
+    },
+    {
+      "name": "delivery",
+      "score": 0,
+      "improving": false
+    }
   ]
 }

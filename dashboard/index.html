@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cowork Process Monitor</title>
+  <link rel="icon" href="data:," />
   <link rel="stylesheet" href="assets/dashboard.css" />
 </head>
 <body>
@@ -53,8 +54,14 @@
   </main>
 
   <footer class="footer">
-    <span id="generatedAt">—</span>
-    <button id="refresh" type="button">Refresh</button>
+    <span id="meta">
+      <span id="generatedAt">—</span>
+      <span id="dataSource" class="datasource"></span>
+    </span>
+    <span class="footer-actions">
+      <label class="auto"><input type="checkbox" id="autoRefresh" checked /> Auto-refresh</label>
+      <button id="refresh" type="button">Refresh</button>
+    </span>
   </footer>
 
   <script src="assets/dashboard.js"></script>

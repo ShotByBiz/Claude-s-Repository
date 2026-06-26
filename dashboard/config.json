@@ -1,0 +1,34 @@
+{
+  "mode": "offline",
+  "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
+  "permittedAreas": ["monitoring", "optimization", "reporting"],
+  "areaPaths": {
+    "monitoring": ["dashboard/assets/dashboard.js"],
+    "optimization": ["dashboard/generate_status.py"],
+    "reporting": ["dashboard/index.html", "dashboard/assets/dashboard.css"]
+  },
+  "skippedProcesses": [
+    {
+      "id": "proc-external-sync",
+      "name": "External Sync",
+      "area": "integration",
+      "status": "skipped",
+      "health": "blocked",
+      "needsNewPermission": true,
+      "note": "Skipped: requires new outbound integration permission. Deferred until online/authorized."
+    },
+    {
+      "id": "proc-deploy",
+      "name": "Auto Deploy",
+      "area": "delivery",
+      "status": "skipped",
+      "health": "blocked",
+      "needsNewPermission": true,
+      "note": "Skipped: needs deploy credentials/permission. Deferred."
+    }
+  ],
+  "skippedTasks": [
+    { "id": "t-ext", "title": "Connect new external API", "area": "integration", "status": "skipped", "needsNewPermission": true },
+    { "id": "t-dep", "title": "Provision deploy target", "area": "delivery", "status": "skipped", "needsNewPermission": true }
+  ]
+}

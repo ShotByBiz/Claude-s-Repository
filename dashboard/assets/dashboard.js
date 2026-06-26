@@ -188,10 +188,22 @@ async function load() {
 
     const gen = document.getElementById("generatedAt");
     gen.textContent = "Generated: " + (d.generatedAt ? new Date(d.generatedAt).toLocaleString() : "—");
+    const src = document.getElementById("dataSource");
+    src.textContent = d.dataSource ? " · " + d.dataSource : "";
   } catch (err) {
     loading.textContent = "Could not load status data (" + err.message + "). Serve this folder over HTTP and ensure data/status.json exists.";
   }
 }
 
+// Auto-refresh every 30s when enabled, so an updated status.json shows up live.
+let autoTimer = null;
+function syncAutoRefresh() {
+  const on = document.getElementById("autoRefresh").checked;
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  if (on) autoTimer = setInterval(load, 30000);
+}
+
 document.getElementById("refresh").addEventListener("click", load);
+document.getElementById("autoRefresh").addEventListener("change", syncAutoRefresh);
+syncAutoRefresh();
 load();

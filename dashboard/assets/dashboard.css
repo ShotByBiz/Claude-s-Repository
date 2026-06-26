@@ -144,3 +144,9 @@ tr:last-child td { border-bottom: none; }
   font-size: 13px;
 }
 .footer button:hover { border-color: var(--accent); }
+.footer-actions { display: flex; align-items: center; gap: 14px; }
+.footer .auto { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.datasource { color: var(--muted); }
+@media (max-width: 600px) {
+  .footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+}

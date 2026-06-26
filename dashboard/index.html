@@ -23,6 +23,24 @@
 
     <section class="cards" id="cards" hidden></section>
 
+    <section class="panel" id="usagePanel" hidden>
+      <h2>Usage &amp; budget</h2>
+      <div class="usage-top">
+        <div class="usage-budget">
+          <div class="usage-head">
+            <span id="usageLabel">Daily budget</span>
+            <span id="usageNums">—</span>
+          </div>
+          <div class="area-bar"><span id="usageFill"></span></div>
+          <p class="usage-note" id="usageNote"></p>
+        </div>
+      </div>
+      <div class="usage-pattern">
+        <div class="usage-head"><span>Learned activity pattern (by hour, UTC)</span><span id="peakHour"></span></div>
+        <div class="hours" id="hours"></div>
+      </div>
+    </section>
+
     <section class="grid">
       <div class="panel" id="trendPanel" hidden>
         <h2>Efficiency trend</h2>

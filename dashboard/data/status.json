@@ -1,15 +1,52 @@
 {
-  "generatedAt": "2026-06-26T18:49:31Z",
+  "generatedAt": "2026-06-26T18:53:19Z",
   "dataSource": "Derived from repository git history (offline, no external calls).",
   "mode": "offline",
   "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
   "summary": {
     "activeProcesses": 3,
-    "completedTasks": 3,
+    "completedTasks": 4,
     "pendingTasks": 0,
     "skippedNeedsPermission": 2,
-    "efficiencyPct": 96,
+    "efficiencyPct": 100,
     "uptimePct": 100.0
+  },
+  "usage": {
+    "dailyBudget": 40,
+    "usedToday": 22,
+    "remaining": 18,
+    "usedPct": 55,
+    "unitLabel": "work units",
+    "peakHourUtc": 18,
+    "recommendedPerHour": 3.0,
+    "onTrack": true,
+    "hourlyPattern": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "pacingNote": "18 of 40 work units left; ~3.0/hr to spread evenly over 6h. Peak activity hour is 18:00 UTC."
   },
   "processes": [
     {
@@ -18,7 +55,7 @@
       "area": "monitoring",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:40:32Z",
+      "lastTickIso": "2026-06-26T18:49:38Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Derives live status from git history (offline-capable)."
@@ -29,7 +66,7 @@
       "area": "optimization",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:40:32Z",
+      "lastTickIso": "2026-06-26T18:49:38Z",
       "throughputPerMin": 3,
       "needsNewPermission": false,
       "note": "Scores work areas from recent commit activity."
@@ -40,7 +77,7 @@
       "area": "reporting",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:49:31Z",
+      "lastTickIso": "2026-06-26T18:53:19Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Renders this dashboard from generated status.json."
@@ -71,20 +108,27 @@
   "tasks": [
     {
       "id": "c-0",
-      "title": "Add real git-derived data feed, fix Pages deploy, dashboard tweaks",
+      "title": "Finish dashboard: build to downloadable artifact, drop failing Pages deploy",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-1",
-      "title": "Add self-contained Cowork process monitoring dashboard",
+      "title": "Add real git-derived data feed, fix Pages deploy, dashboard tweaks",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-2",
+      "title": "Add self-contained Cowork process monitoring dashboard",
+      "area": "monitoring",
+      "status": "done",
+      "needsNewPermission": false
+    },
+    {
+      "id": "c-3",
       "title": "Initial commit",
       "area": "monitoring",
       "status": "done",
@@ -115,7 +159,7 @@
     55,
     55,
     55,
-    96
+    100
   ],
   "areas": [
     {

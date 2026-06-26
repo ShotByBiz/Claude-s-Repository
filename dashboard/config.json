@@ -1,6 +1,12 @@
 {
   "mode": "offline",
   "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
+  "budget": {
+    "dailyUnits": 40,
+    "unitLabel": "work units",
+    "plannedTasksToday": 6,
+    "note": "Daily work budget. Pace tasks against learned activity hours to finish the day within limits."
+  },
   "permittedAreas": ["monitoring", "optimization", "reporting"],
   "areaPaths": {
     "monitoring": ["dashboard/assets/dashboard.js"],

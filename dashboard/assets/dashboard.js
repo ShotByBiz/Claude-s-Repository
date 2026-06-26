@@ -61,6 +61,38 @@ function renderCards(s) {
   show("cards");
 }
 
+function renderUsage(u) {
+  if (!u) return;
+  show("usagePanel");
+  document.getElementById("usageLabel").textContent = "Daily budget (" + u.unitLabel + ")";
+  document.getElementById("usageNums").textContent =
+    u.usedToday + " / " + u.dailyBudget + " used · " + u.remaining + " left";
+  const fill = document.getElementById("usageFill");
+  fill.style.width = Math.min(100, u.usedPct) + "%";
+  fill.style.background = u.usedPct >= 90 ? "var(--bad)" : u.usedPct >= 70 ? "var(--warn)" : "var(--good)";
+  const note = document.getElementById("usageNote");
+  note.textContent = (u.onTrack ? "On track. " : "Over budget. ") + u.pacingNote;
+  note.style.color = u.onTrack ? "var(--muted)" : "var(--bad)";
+
+  const peak = document.getElementById("peakHour");
+  peak.textContent = "peak " + String(u.peakHourUtc).padStart(2, "0") + ":00";
+
+  const hours = document.getElementById("hours");
+  hours.innerHTML = "";
+  const pattern = u.hourlyPattern || [];
+  const max = Math.max(1, ...pattern);
+  pattern.forEach((v, h) => {
+    const col = el("div", "hour");
+    const bar = el("div", "hour-bar");
+    bar.style.height = Math.round((v / max) * 100) + "%";
+    if (h === u.peakHourUtc) bar.classList.add("peak");
+    bar.title = String(h).padStart(2, "0") + ":00 — " + v;
+    col.appendChild(bar);
+    if (h % 6 === 0) col.appendChild(el("span", "hour-label", String(h)));
+    hours.appendChild(col);
+  });
+}
+
 function renderTrend(series) {
   if (!Array.isArray(series) || series.length === 0) return;
   show("trendPanel");
@@ -181,6 +213,7 @@ async function load() {
     loading.hidden = true;
     renderMode(d);
     if (d.summary) renderCards(d.summary);
+    renderUsage(d.usage);
     renderTrend(d.efficiencyTrend);
     renderAreas(d.areas);
     renderProcesses(d.processes);

@@ -1,0 +1,140 @@
+{
+  "generatedAt": "2026-06-26T18:38:17Z",
+  "dataSource": "Derived from repository git history (offline, no external calls).",
+  "mode": "offline",
+  "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
+  "summary": {
+    "activeProcesses": 3,
+    "completedTasks": 2,
+    "pendingTasks": 0,
+    "skippedNeedsPermission": 2,
+    "efficiencyPct": 84,
+    "uptimePct": 100.0
+  },
+  "processes": [
+    {
+      "id": "proc-monitor",
+      "name": "Process Monitor",
+      "area": "monitoring",
+      "status": "running",
+      "health": "good",
+      "lastTickIso": "2026-06-26T18:34:28Z",
+      "throughputPerMin": 1,
+      "needsNewPermission": false,
+      "note": "Derives live status from git history (offline-capable)."
+    },
+    {
+      "id": "proc-efficiency",
+      "name": "Efficiency Analyzer",
+      "area": "optimization",
+      "status": "running",
+      "health": "good",
+      "lastTickIso": "2026-06-26T18:34:28Z",
+      "throughputPerMin": 3,
+      "needsNewPermission": false,
+      "note": "Scores work areas from recent commit activity."
+    },
+    {
+      "id": "proc-reporter",
+      "name": "Report Generator",
+      "area": "reporting",
+      "status": "running",
+      "health": "good",
+      "lastTickIso": "2026-06-26T18:38:17Z",
+      "throughputPerMin": 1,
+      "needsNewPermission": false,
+      "note": "Renders this dashboard from generated status.json."
+    },
+    {
+      "id": "proc-external-sync",
+      "name": "External Sync",
+      "area": "integration",
+      "status": "skipped",
+      "health": "blocked",
+      "needsNewPermission": true,
+      "note": "Skipped: requires new outbound integration permission. Deferred until online/authorized.",
+      "lastTickIso": null,
+      "throughputPerMin": 0
+    },
+    {
+      "id": "proc-deploy",
+      "name": "Auto Deploy",
+      "area": "delivery",
+      "status": "skipped",
+      "health": "blocked",
+      "needsNewPermission": true,
+      "note": "Skipped: needs deploy credentials/permission. Deferred.",
+      "lastTickIso": null,
+      "throughputPerMin": 0
+    }
+  ],
+  "tasks": [
+    {
+      "id": "c-0",
+      "title": "Add self-contained Cowork process monitoring dashboard",
+      "area": "monitoring",
+      "status": "done",
+      "needsNewPermission": false
+    },
+    {
+      "id": "c-1",
+      "title": "Initial commit",
+      "area": "monitoring",
+      "status": "done",
+      "needsNewPermission": false
+    },
+    {
+      "id": "t-ext",
+      "title": "Connect new external API",
+      "area": "integration",
+      "status": "skipped",
+      "needsNewPermission": true
+    },
+    {
+      "id": "t-dep",
+      "title": "Provision deploy target",
+      "area": "delivery",
+      "status": "skipped",
+      "needsNewPermission": true
+    }
+  ],
+  "efficiencyTrend": [
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    55,
+    84
+  ],
+  "areas": [
+    {
+      "name": "monitoring",
+      "score": 70,
+      "improving": true
+    },
+    {
+      "name": "optimization",
+      "score": 60,
+      "improving": false
+    },
+    {
+      "name": "reporting",
+      "score": 70,
+      "improving": true
+    },
+    {
+      "name": "integration",
+      "score": 0,
+      "improving": false
+    },
+    {
+      "name": "delivery",
+      "score": 0,
+      "improving": false
+    }
+  ]
+}

@@ -148,6 +148,25 @@ def build():
 
     pending = sum(1 for t in tasks if t["status"] in ("in_progress", "pending"))
 
+    # --- Activity feed: real completion events from commit history (newest first). ---
+    def area_for(files):
+        for area, prefixes in area_paths.items():
+            if any(f.startswith(p) for f in files for p in prefixes):
+                return area
+        return "monitoring"
+
+    event_subjects = git("log", "--no-merges", "-25", "--pretty=format:%s").splitlines()
+    events = []
+    for idx, (dt, files) in enumerate(commits[:25]):
+        events.append({
+            "id": f"ev-{idx}",
+            "ts": iso(dt),
+            "kind": "task_done",
+            "area": area_for(files),
+            "title": (event_subjects[idx] if idx < len(event_subjects) else "Update")[:90],
+            "files": len(files),
+        })
+
     # --- Usage & budget: learn activity pattern, track daily budget, pace. ---
     budget_cfg = cfg.get("budget", {})
     daily_units = budget_cfg.get("dailyUnits", 40)
@@ -204,6 +223,7 @@ def build():
             "uptimePct": 100.0,
         },
         "usage": usage,
+        "events": events,
         "processes": processes,
         "tasks": tasks,
         "efficiencyTrend": trend,

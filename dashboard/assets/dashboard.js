@@ -203,6 +203,180 @@ function renderTasks(tasks) {
   }
 }
 
+// ---------- Approvals inbox ("on your desk") ----------
+const PENDING_URL = "data/pending.json";
+const REPO_ISSUES = "https://github.com/ShotByBiz/Claude-s-Repository/issues/new";
+
+function decisionKey(id) { return "decision:" + id; }
+
+function renderDesk(data) {
+  const items = (data && data.items) || [];
+  document.getElementById("deskCount").textContent = items.length;
+  if (data && data.note) document.getElementById("deskSub").textContent = data.note;
+  show("deskPanel");
+  const wrap = document.getElementById("deskItems");
+  wrap.innerHTML = "";
+  if (!items.length) {
+    wrap.appendChild(el("p", "desk-empty", "Nothing waiting — your desk is clear. ✅"));
+    return;
+  }
+  items.forEach((it) => wrap.appendChild(deskCard(it)));
+}
+
+function deskCard(it) {
+  const card = el("div", "desk-card");
+  const saved = localStorage.getItem(decisionKey(it.id));
+  card.appendChild(el("div", "desk-title", it.title));
+  if (it.detail) card.appendChild(el("div", "desk-detail", it.detail));
+  if (saved) {
+    card.classList.add("decided");
+    renderDecided(card, it, JSON.parse(saved));
+  } else {
+    const actions = el("div", "desk-actions");
+    (it.options || ["Approve", "Deny"]).forEach((opt, i) => {
+      const b = el("button", "desk-btn" + (i === 0 ? " primary" : ""), opt);
+      b.addEventListener("click", () => decide(card, it, opt));
+      actions.appendChild(b);
+    });
+    card.appendChild(actions);
+  }
+  return card;
+}
+
+function decide(card, it, choice) {
+  const rec = { choice, at: new Date().toISOString() };
+  localStorage.setItem(decisionKey(it.id), JSON.stringify(rec));
+  card.classList.add("decided");
+  const a = card.querySelector(".desk-actions");
+  if (a) a.remove();
+  renderDecided(card, it, rec);
+  burst();
+}
+
+function renderDecided(card, it, rec) {
+  const relay = "[decision] " + it.id + ": " + rec.choice;
+  const box = el("div", "desk-decided");
+  box.appendChild(el("span", "desk-chosen", "✓ You chose: " + rec.choice));
+  const copyBtn = el("button", "desk-btn small", "Copy & relay to Claude");
+  copyBtn.addEventListener("click", () => {
+    if (navigator.clipboard) navigator.clipboard.writeText(relay);
+    copyBtn.textContent = "Copied ✓ — paste in chat";
+  });
+  box.appendChild(copyBtn);
+  const link = el("a", "desk-link", "or open a GitHub issue");
+  link.href = REPO_ISSUES + "?title=" + encodeURIComponent("Decision: " + it.id) +
+              "&body=" + encodeURIComponent(relay);
+  link.target = "_blank"; link.rel = "noopener";
+  box.appendChild(link);
+  const undo = el("button", "desk-btn small ghost", "Undo");
+  undo.addEventListener("click", () => { localStorage.removeItem(decisionKey(it.id)); loadPending(); });
+  box.appendChild(undo);
+  card.appendChild(box);
+}
+
+async function loadPending() {
+  try {
+    const res = await fetch(PENDING_URL, { cache: "no-store" });
+    if (!res.ok) return;
+    renderDesk(await res.json());
+  } catch (_) { /* desk is optional */ }
+}
+
+// ---------- Live activity feed ----------
+let knownEventIds = new Set();
+let feedInitialized = false;
+let lastEvents = null;
+
+const AREA_COLORS = {
+  monitoring: "#58a6ff", optimization: "#3fb950", reporting: "#d29922",
+  integration: "#bc8cff", delivery: "#f778ba",
+};
+function areaColor(area) { return AREA_COLORS[area] || "#58a6ff"; }
+
+function feedCard(ev) {
+  const card = el("div", "feed-item");
+  card.style.setProperty("--accent", areaColor(ev.area));
+  const ring = el("div", "feed-ring");
+  ring.innerHTML =
+    '<svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="16"></circle>' +
+    '<circle class="fg" cx="18" cy="18" r="16"></circle></svg><span class="check">✓</span>';
+  card.appendChild(ring);
+  const body = el("div", "feed-body");
+  body.appendChild(el("div", "feed-title", ev.title));
+  const meta = el("div", "feed-meta");
+  meta.appendChild(el("span", "feed-area", ev.area));
+  meta.appendChild(el("span", null, " · " + (ev.files || 0) + " files · " + timeAgo(ev.ts)));
+  body.appendChild(meta);
+  card.appendChild(body);
+  return card;
+}
+
+function renderFeed(events, opts) {
+  events = events || [];
+  opts = opts || {};
+  show("feedPanel");
+  const feed = document.getElementById("feed");
+  const stagger = opts.stagger !== undefined ? opts.stagger : !feedInitialized;
+
+  if (!feedInitialized || opts.replace) {
+    feed.innerHTML = "";
+    knownEventIds = new Set();
+    events.forEach((ev, i) => {
+      const card = feedCard(ev);
+      feed.appendChild(card);
+      knownEventIds.add(ev.id);
+      if (stagger) setTimeout(() => card.classList.add("show"), i * 160);
+      else card.classList.add("show");
+    });
+    feedInitialized = true;
+  } else {
+    const incoming = events.filter((ev) => !knownEventIds.has(ev.id));
+    incoming.reverse().forEach((ev) => {
+      const card = feedCard(ev);
+      feed.prepend(card);
+      knownEventIds.add(ev.id);
+      requestAnimationFrame(() => card.classList.add("show"));
+      burst();
+    });
+  }
+}
+
+function replayFeed() {
+  if (lastEvents) renderFeed(lastEvents, { replace: true, stagger: true });
+  burst();
+}
+
+// Completion particle burst on the feed panel's canvas overlay.
+function burst() {
+  const canvas = document.getElementById("burst");
+  const panel = document.getElementById("feedPanel");
+  if (!canvas || !panel) return;
+  canvas.width = panel.clientWidth;
+  canvas.height = panel.clientHeight;
+  const ctx = canvas.getContext("2d");
+  const cx = canvas.width - 48, cy = 56;
+  const colors = ["#58a6ff", "#3fb950", "#d29922", "#bc8cff", "#f778ba"];
+  const parts = [];
+  for (let i = 0; i < 28; i++) {
+    const a = Math.random() * Math.PI * 2, s = 2 + Math.random() * 4.5;
+    parts.push({ x: cx, y: cy, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1.2,
+      life: 1, c: colors[i % colors.length] });
+  }
+  let frame = 0;
+  (function anim() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    parts.forEach((p) => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.13; p.life -= 0.024;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    if (++frame < 48) requestAnimationFrame(anim);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  })();
+}
+
 async function load() {
   const loading = document.getElementById("loading");
   try {
@@ -214,6 +388,8 @@ async function load() {
     renderMode(d);
     if (d.summary) renderCards(d.summary);
     renderUsage(d.usage);
+    lastEvents = d.events || [];
+    renderFeed(lastEvents);
     renderTrend(d.efficiencyTrend);
     renderAreas(d.areas);
     renderProcesses(d.processes);
@@ -238,5 +414,10 @@ function syncAutoRefresh() {
 
 document.getElementById("refresh").addEventListener("click", load);
 document.getElementById("autoRefresh").addEventListener("change", syncAutoRefresh);
+document.getElementById("replayBtn").addEventListener("click", replayFeed);
+document.getElementById("liveToggle").addEventListener("change", (e) => {
+  document.getElementById("liveDot").classList.toggle("off", !e.target.checked);
+});
 syncAutoRefresh();
+loadPending();
 load();

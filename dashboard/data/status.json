@@ -1,24 +1,24 @@
 {
-  "generatedAt": "2026-06-26T18:53:19Z",
+  "generatedAt": "2026-06-27T02:25:21Z",
   "dataSource": "Derived from repository git history (offline, no external calls).",
   "mode": "offline",
   "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
   "summary": {
     "activeProcesses": 3,
-    "completedTasks": 4,
+    "completedTasks": 6,
     "pendingTasks": 0,
     "skippedNeedsPermission": 2,
-    "efficiencyPct": 100,
+    "efficiencyPct": 55,
     "uptimePct": 100.0
   },
   "usage": {
     "dailyBudget": 40,
-    "usedToday": 22,
-    "remaining": 18,
-    "usedPct": 55,
+    "usedToday": 0,
+    "remaining": 40,
+    "usedPct": 0,
     "unitLabel": "work units",
     "peakHourUtc": 18,
-    "recommendedPerHour": 3.0,
+    "recommendedPerHour": 1.8,
     "onTrack": true,
     "hourlyPattern": [
       0,
@@ -39,15 +39,65 @@
       0,
       0,
       0,
-      4,
+      6,
       0,
       0,
       0,
       0,
       0
     ],
-    "pacingNote": "18 of 40 work units left; ~3.0/hr to spread evenly over 6h. Peak activity hour is 18:00 UTC."
+    "pacingNote": "40 of 40 work units left; ~1.8/hr to spread evenly over 22h. Peak activity hour is 18:00 UTC."
   },
+  "events": [
+    {
+      "id": "ev-0",
+      "ts": "2026-06-26T18:55:12Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Make CI green and Pages deploy self-activating",
+      "files": 1
+    },
+    {
+      "id": "ev-1",
+      "ts": "2026-06-26T18:53:43Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Add usage/budget tracking panel; restore Pages deploy (repo now public)",
+      "files": 7
+    },
+    {
+      "id": "ev-2",
+      "ts": "2026-06-26T18:49:38Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Finish dashboard: build to downloadable artifact, drop failing Pages deploy",
+      "files": 3
+    },
+    {
+      "id": "ev-3",
+      "ts": "2026-06-26T18:40:32Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Add real git-derived data feed, fix Pages deploy, dashboard tweaks",
+      "files": 8
+    },
+    {
+      "id": "ev-4",
+      "ts": "2026-06-26T18:34:28Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Add self-contained Cowork process monitoring dashboard",
+      "files": 6
+    },
+    {
+      "id": "ev-5",
+      "ts": "2026-06-26T18:17:18Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Initial commit",
+      "files": 1
+    }
+  ],
   "processes": [
     {
       "id": "proc-monitor",
@@ -55,7 +105,7 @@
       "area": "monitoring",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:49:38Z",
+      "lastTickIso": "2026-06-26T18:55:12Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Derives live status from git history (offline-capable)."
@@ -66,7 +116,7 @@
       "area": "optimization",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-26T18:49:38Z",
+      "lastTickIso": "2026-06-26T18:55:12Z",
       "throughputPerMin": 3,
       "needsNewPermission": false,
       "note": "Scores work areas from recent commit activity."
@@ -76,8 +126,8 @@
       "name": "Report Generator",
       "area": "reporting",
       "status": "running",
-      "health": "good",
-      "lastTickIso": "2026-06-26T18:53:19Z",
+      "health": "warn",
+      "lastTickIso": "2026-06-27T02:25:21Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Renders this dashboard from generated status.json."
@@ -108,28 +158,35 @@
   "tasks": [
     {
       "id": "c-0",
-      "title": "Finish dashboard: build to downloadable artifact, drop failing Pages deploy",
+      "title": "Make CI green and Pages deploy self-activating",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-1",
-      "title": "Add real git-derived data feed, fix Pages deploy, dashboard tweaks",
+      "title": "Add usage/budget tracking panel; restore Pages deploy (repo now public)",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-2",
-      "title": "Add self-contained Cowork process monitoring dashboard",
+      "title": "Finish dashboard: build to downloadable artifact, drop failing Pages deploy",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-3",
-      "title": "Initial commit",
+      "title": "Add real git-derived data feed, fix Pages deploy, dashboard tweaks",
+      "area": "monitoring",
+      "status": "done",
+      "needsNewPermission": false
+    },
+    {
+      "id": "c-4",
+      "title": "Add self-contained Cowork process monitoring dashboard",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
@@ -158,23 +215,23 @@
     55,
     55,
     55,
-    55,
-    100
+    100,
+    55
   ],
   "areas": [
     {
       "name": "monitoring",
-      "score": 80,
+      "score": 90,
       "improving": true
     },
     {
       "name": "optimization",
-      "score": 70,
+      "score": 80,
       "improving": true
     },
     {
       "name": "reporting",
-      "score": 80,
+      "score": 90,
       "improving": true
     },
     {

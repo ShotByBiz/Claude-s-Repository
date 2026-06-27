@@ -21,7 +21,26 @@
 
     <section class="mode-note" id="modeNote" hidden></section>
 
+    <section class="panel desk" id="deskPanel" hidden>
+      <h2>📋 On your desk <span class="badge" id="deskCount">0</span></h2>
+      <p class="desk-sub" id="deskSub">Questions and actions waiting on you. Decide here.</p>
+      <div id="deskItems"></div>
+    </section>
+
     <section class="cards" id="cards" hidden></section>
+
+    <section class="panel feed-panel" id="feedPanel" hidden>
+      <div class="feed-header">
+        <h2>Live activity</h2>
+        <div class="feed-controls">
+          <span class="live-dot" id="liveDot" title="live"></span>
+          <button id="replayBtn" type="button">▶ Replay</button>
+          <label class="auto"><input type="checkbox" id="liveToggle" checked /> Live</label>
+        </div>
+      </div>
+      <canvas id="burst" class="burst-canvas"></canvas>
+      <div id="feed" class="feed"></div>
+    </section>
 
     <section class="panel" id="usagePanel" hidden>
       <h2>Usage &amp; budget</h2>

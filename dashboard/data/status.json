@@ -1,29 +1,29 @@
 {
-  "generatedAt": "2026-06-27T02:47:02Z",
+  "generatedAt": "2026-06-27T03:00:25Z",
   "dataSource": "Derived from repository git history (offline, no external calls).",
   "mode": "offline",
   "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
   "summary": {
     "activeProcesses": 3,
-    "completedTasks": 9,
+    "completedTasks": 10,
     "pendingTasks": 0,
     "skippedNeedsPermission": 2,
-    "efficiencyPct": 96,
+    "efficiencyPct": 100,
     "uptimePct": 100.0
   },
   "usage": {
     "dailyBudget": 40,
-    "usedToday": 14,
-    "remaining": 26,
-    "usedPct": 35,
+    "usedToday": 20,
+    "remaining": 20,
+    "usedPct": 50,
     "unitLabel": "work units",
     "peakHourUtc": 18,
-    "recommendedPerHour": 1.2,
+    "recommendedPerHour": 1.0,
     "onTrack": true,
     "hourlyPattern": [
       0,
       0,
-      3,
+      4,
       0,
       0,
       0,
@@ -46,11 +46,19 @@
       0,
       0
     ],
-    "pacingNote": "26 of 40 work units left; ~1.2/hr to spread evenly over 22h. Peak activity hour is 18:00 UTC."
+    "pacingNote": "20 of 40 work units left; ~1.0/hr to spread evenly over 21h. Peak activity hour is 18:00 UTC."
   },
   "events": [
     {
       "id": "ev-0",
+      "ts": "2026-06-27T02:48:34Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Add scheduled-maintenance overlay, narration, and pseudo-3D feed",
+      "files": 5
+    },
+    {
+      "id": "ev-1",
       "ts": "2026-06-27T02:32:24Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -58,7 +66,7 @@
       "files": 1
     },
     {
-      "id": "ev-1",
+      "id": "ev-2",
       "ts": "2026-06-27T02:28:26Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -66,7 +74,7 @@
       "files": 4
     },
     {
-      "id": "ev-2",
+      "id": "ev-3",
       "ts": "2026-06-27T02:26:01Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -74,7 +82,7 @@
       "files": 6
     },
     {
-      "id": "ev-3",
+      "id": "ev-4",
       "ts": "2026-06-26T18:55:12Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -82,7 +90,7 @@
       "files": 1
     },
     {
-      "id": "ev-4",
+      "id": "ev-5",
       "ts": "2026-06-26T18:53:43Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -90,7 +98,7 @@
       "files": 7
     },
     {
-      "id": "ev-5",
+      "id": "ev-6",
       "ts": "2026-06-26T18:49:38Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -98,7 +106,7 @@
       "files": 3
     },
     {
-      "id": "ev-6",
+      "id": "ev-7",
       "ts": "2026-06-26T18:40:32Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -106,7 +114,7 @@
       "files": 8
     },
     {
-      "id": "ev-7",
+      "id": "ev-8",
       "ts": "2026-06-26T18:34:28Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -114,7 +122,7 @@
       "files": 6
     },
     {
-      "id": "ev-8",
+      "id": "ev-9",
       "ts": "2026-06-26T18:17:18Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -129,7 +137,7 @@
       "area": "monitoring",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-27T02:32:24Z",
+      "lastTickIso": "2026-06-27T02:48:34Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Derives live status from git history (offline-capable)."
@@ -140,7 +148,7 @@
       "area": "optimization",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-27T02:32:24Z",
+      "lastTickIso": "2026-06-27T02:48:34Z",
       "throughputPerMin": 3,
       "needsNewPermission": false,
       "note": "Scores work areas from recent commit activity."
@@ -151,7 +159,7 @@
       "area": "reporting",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-27T02:47:02Z",
+      "lastTickIso": "2026-06-27T03:00:25Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Renders this dashboard from generated status.json."
@@ -182,35 +190,35 @@
   "tasks": [
     {
       "id": "c-0",
-      "title": "Refresh generated dashboard data",
+      "title": "Add scheduled-maintenance overlay, narration, and pseudo-3D feed",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-1",
-      "title": "Fix CI startup failure; make bare Pages URL work in branch mode",
+      "title": "Refresh generated dashboard data",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-2",
-      "title": "Add approvals inbox ('on your desk') and animated live activity feed",
+      "title": "Fix CI startup failure; make bare Pages URL work in branch mode",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-3",
-      "title": "Make CI green and Pages deploy self-activating",
+      "title": "Add approvals inbox ('on your desk') and animated live activity feed",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-4",
-      "title": "Add usage/budget tracking panel; restore Pages deploy (repo now public)",
+      "title": "Make CI green and Pages deploy self-activating",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
@@ -240,7 +248,7 @@
     55,
     55,
     100,
-    96
+    100
   ],
   "areas": [
     {

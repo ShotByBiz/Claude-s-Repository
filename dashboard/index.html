@@ -46,6 +46,20 @@
 
     <section class="cards" id="cards" hidden></section>
 
+    <section class="panel scene-panel" id="scenePanel" hidden>
+      <div class="feed-header">
+        <h2>3D activity universe</h2>
+        <div class="feed-controls">
+          <span class="scene-hint">drag to orbit</span>
+          <button id="scenePulse" type="button">✦ Pulse</button>
+        </div>
+      </div>
+      <div class="scene-wrap">
+        <canvas id="scene3d"></canvas>
+        <div class="scene-label" id="scene3dLabel">Initializing 3D scene…</div>
+      </div>
+    </section>
+
     <section class="panel feed-panel" id="feedPanel" hidden>
       <div class="feed-header">
         <h2>Live activity</h2>
@@ -126,6 +140,8 @@
     </span>
   </footer>
 
+  <script src="vendor/three.min.js"></script>
+  <script src="assets/scene3d.js"></script>
   <script src="assets/dashboard.js"></script>
 </body>
 </html>

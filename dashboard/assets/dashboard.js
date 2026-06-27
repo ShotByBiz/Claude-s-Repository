@@ -385,17 +385,50 @@ function incidentBody(cfg, reports) {
   return lines.join("\n");
 }
 
+function autoSendOn() {
+  const saved = localStorage.getItem("incidentAutoSend");
+  if (saved != null) return saved === "true";
+  return !!(incidentsCfg && incidentsCfg.autoSubmit);
+}
+
+function markSubmitted(reports, how) {
+  reports.forEach((r) => localStorage.setItem(incKey(r.id),
+    JSON.stringify({ status: "submitted", how, at: new Date().toISOString() })));
+  renderIncidents(incidentsCfg);
+}
+
 function submitIncidents(reports) {
   if (!incidentsCfg || !reports.length) return;
   const subject = incidentsCfg.subjectPrefix + " (" + incidentsCfg.repo + ")";
   const body = incidentBody(incidentsCfg, reports);
   if (navigator.clipboard) navigator.clipboard.writeText(body);
-  const mailto = "mailto:" + encodeURIComponent(incidentsCfg.recipient) +
+
+  // Full-auto path: POST to a configured webhook (e.g. Zapier) — hands-off.
+  if (autoSendOn() && incidentsCfg.webhookUrl) {
+    fetch(incidentsCfg.webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        account: incidentsCfg.account, repo: incidentsCfg.repo,
+        recipient: incidentsCfg.recipient, subject, report: body,
+        ids: reports.map((r) => r.id),
+      }),
+    }).then(() => markSubmitted(reports, "auto"))
+      .catch(() => {                       // fall back to email if the POST fails
+        window.open(mailtoLink(subject, body), "_blank");
+        markSubmitted(reports, "email");
+      });
+    return;
+  }
+
+  // Default ("click-off") path: open a pre-filled email; you hit Send.
+  window.open(mailtoLink(subject, body), "_blank");
+  markSubmitted(reports, "email");
+}
+
+function mailtoLink(subject, body) {
+  return "mailto:" + encodeURIComponent(incidentsCfg.recipient) +
     "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-  window.open(mailto, "_blank");
-  reports.forEach((r) => localStorage.setItem(incKey(r.id),
-    JSON.stringify({ status: "submitted", at: new Date().toISOString() })));
-  renderIncidents(incidentsCfg);
 }
 
 function incidentCard(r) {
@@ -408,8 +441,9 @@ function incidentCard(r) {
   card.appendChild(el("div", "desk-detail", r.when + " · ref " + r.run + " · " + r.error));
   if (saved) {
     card.classList.add("decided");
+    const how = (JSON.parse(saved).how === "auto") ? "auto-sent via webhook" : "opened in your mail app";
     const box = el("div", "desk-decided");
-    box.appendChild(el("span", "desk-chosen", "✓ Submitted (opened in your mail app)"));
+    box.appendChild(el("span", "desk-chosen", "✓ Submitted (" + how + ")"));
     const undo = el("button", "desk-btn small ghost", "Undo");
     undo.addEventListener("click", () => { localStorage.removeItem(incKey(r.id)); renderIncidents(incidentsCfg); });
     box.appendChild(undo);
@@ -443,13 +477,26 @@ function renderIncidents(cfg) {
   allBtn.textContent = ready.length ? "✉ Approve & submit all (" + ready.length + ")" : "All submitted ✓";
 }
 
+function updateIncSub() {
+  const sub = document.getElementById("incSub");
+  if (autoSendOn()) {
+    sub.textContent = incidentsCfg && incidentsCfg.webhookUrl
+      ? "Auto-send ON — one click sends the report automatically via webhook."
+      : "Auto-send ON, but no webhook is set — falls back to a pre-filled email. Add webhookUrl in incidents.json to go fully hands-off.";
+  } else {
+    sub.textContent = "One click opens a pre-filled email to support with the report. You just hit Send.";
+  }
+}
+
 async function loadIncidents() {
   try {
     const res = await fetch(INCIDENTS_URL, { cache: "no-store" });
     if (!res.ok) return;
     incidentsCfg = await res.json();
     document.getElementById("incidentsPanel").hidden = false;
-    if (incidentsCfg.note) document.getElementById("incSub").textContent = incidentsCfg.note;
+    const toggle = document.getElementById("autoSendToggle");
+    toggle.checked = autoSendOn();
+    updateIncSub();
     renderIncidents(incidentsCfg);
   } catch (_) { /* optional */ }
 }
@@ -697,6 +744,10 @@ document.getElementById("submitAll").addEventListener("click", () => {
   if (!incidentsCfg) return;
   const ready = incidentsCfg.reports.filter((r) => !localStorage.getItem(incKey(r.id)));
   submitIncidents(ready);
+});
+document.getElementById("autoSendToggle").addEventListener("change", (e) => {
+  localStorage.setItem("incidentAutoSend", e.target.checked ? "true" : "false");
+  updateIncSub();
 });
 syncAutoRefresh();
 loadMaintenance();

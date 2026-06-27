@@ -553,6 +553,14 @@ async function load() {
     renderFeed(lastEvents);
     startStars();
     initTilt();
+    if (typeof window.initScene3d === "function") {
+      const ok = window.initScene3d(d);
+      const sp = document.getElementById("scenePanel");
+      if (ok && sp) {
+        sp.hidden = false;
+        if (window.resizeScene3d) requestAnimationFrame(window.resizeScene3d);
+      }
+    }
     renderTrend(d.efficiencyTrend);
     renderAreas(d.areas);
     renderProcesses(d.processes);
@@ -578,7 +586,13 @@ function syncAutoRefresh() {
 
 document.getElementById("refresh").addEventListener("click", load);
 document.getElementById("autoRefresh").addEventListener("change", syncAutoRefresh);
-document.getElementById("replayBtn").addEventListener("click", replayFeed);
+document.getElementById("replayBtn").addEventListener("click", () => {
+  replayFeed();
+  if (typeof window.pulseScene3d === "function") window.pulseScene3d();
+});
+document.getElementById("scenePulse").addEventListener("click", () => {
+  if (typeof window.pulseScene3d === "function") window.pulseScene3d();
+});
 document.getElementById("liveToggle").addEventListener("change", (e) => {
   document.getElementById("liveDot").classList.toggle("off", !e.target.checked);
 });

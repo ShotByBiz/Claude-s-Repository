@@ -1,12 +1,10 @@
-name: Build & deploy dashboard
+name: Build dashboard
 
-# The build/validate/artifact steps always run and keep CI green.
-# The GitHub Pages steps are best-effort: GitHub requires Pages to be
-# switched on once by hand (repo Settings -> Pages -> Build and deployment
-# -> Source: "GitHub Actions") because no Actions token can create the
-# Pages site itself. Until that one-time toggle, the Pages steps are
-# allowed to fail without failing the job; the moment Pages is enabled the
-# live URL publishes automatically with no further change.
+# Validates the dashboard and publishes it as a downloadable artifact.
+# No GitHub Pages deploy here: Pages is served in "branch" mode straight
+# from the repo (Settings -> Pages), which is independent of Actions. Tying
+# the job to the github-pages environment caused startup failures on
+# non-default branches due to environment protection rules, so it's gone.
 
 on:
   push:
@@ -16,19 +14,10 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,30 +30,12 @@ jobs:
       - name: Validate dashboard
         run: |
           python3 -c "import json; json.load(open('dashboard/data/status.json')); print('status.json OK')"
+          python3 -c "import json; json.load(open('dashboard/data/pending.json')); print('pending.json OK')"
           test -f dashboard/index.html
           test -f dashboard/assets/dashboard.js
           test -f dashboard/assets/dashboard.css
-      - name: Upload dashboard artifact (always available)
+      - name: Upload dashboard artifact
         uses: actions/upload-artifact@v4
         with:
           name: cowork-dashboard
           path: dashboard
-
-      # --- Best-effort GitHub Pages deploy (see header comment) ---
-      - name: Configure Pages
-        id: configure
-        continue-on-error: true
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - name: Upload Pages artifact
-        if: steps.configure.outcome == 'success'
-        continue-on-error: true
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dashboard
-      - name: Deploy to Pages
-        id: deployment
-        if: steps.configure.outcome == 'success'
-        continue-on-error: true
-        uses: actions/deploy-pages@v4

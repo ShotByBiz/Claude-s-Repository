@@ -351,3 +351,16 @@ body.maint-locked { overflow: hidden; }
   padding: 6px 12px; pointer-events: none;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+
+/* ---------- Incident reports panel ---------- */
+.incidents { border-left: 3px solid var(--warn); }
+.incidents .feed-header { margin-bottom: 6px; }
+.inc-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.inc-fault {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 2px 8px; border-radius: 999px;
+}
+.inc-platform { background: rgba(248,81,73,0.15); color: var(--bad); }
+.inc-environmental { background: rgba(210,153,34,0.15); color: var(--warn); }
+.inc-process { background: rgba(88,166,255,0.15); color: var(--accent); }
+.incidents .desk-btn.primary[disabled] { opacity: 0.5; cursor: default; }

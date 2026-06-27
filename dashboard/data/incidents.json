@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-06-27T03:05:00Z",
+  "recipient": "support@anthropic.com",
+  "supportUrl": "https://support.anthropic.com",
+  "account": "shotbybizllc@gmail.com",
+  "repo": "ShotByBiz/Claude-s-Repository",
+  "subjectPrefix": "Usage credit consideration — failed runs",
+  "reports": [
+    {
+      "id": "inc-pages-not-enabled",
+      "title": "GitHub Pages deploy failed: Pages not enabled",
+      "when": "2026-06-26T18:34Z",
+      "run": "28257822759",
+      "error": "Get Pages site failed. Please verify that the repository has Pages enabled and configured to build using GitHub Actions.",
+      "rootCause": "Pages had not been enabled; a one-time repo setting no workflow token can set.",
+      "fault": "environmental",
+      "status": "ready"
+    },
+    {
+      "id": "inc-pages-token",
+      "title": "Pages site cannot be created by Actions token (private repo)",
+      "when": "2026-06-26T18:40Z",
+      "run": "28258131311",
+      "error": "Create Pages site failed. Error: Resource not accessible by integration.",
+      "rootCause": "Pages on a private repo requires a paid plan; the Actions GITHUB_TOKEN cannot create the site. Platform limitation.",
+      "fault": "platform",
+      "status": "ready"
+    },
+    {
+      "id": "inc-env-protection",
+      "title": "Workflow startup failure from environment protection",
+      "when": "2026-06-27T02:26Z",
+      "run": "28275833217",
+      "error": "Startup failure: job rejected before running (no runner, no steps) due to github-pages environment branch restriction.",
+      "rootCause": "Auto-created github-pages environment restricted deploys to the default branch; the job was tied to that environment.",
+      "fault": "platform",
+      "status": "ready"
+    },
+    {
+      "id": "inc-squash-conflict",
+      "title": "Merge conflict from squash-merge divergence",
+      "when": "2026-06-27T03:00Z",
+      "run": "PR #3",
+      "error": "Pull Request has merge conflicts.",
+      "rootCause": "Earlier squash-merges diverged branch history from main; resolved by merging main back in.",
+      "fault": "process",
+      "status": "ready"
+    }
+  ]
+}

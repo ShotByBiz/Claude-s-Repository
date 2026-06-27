@@ -148,6 +148,67 @@ def build():
 
     pending = sum(1 for t in tasks if t["status"] in ("in_progress", "pending"))
 
+    # --- Activity feed: real completion events from commit history (newest first). ---
+    def area_for(files):
+        for area, prefixes in area_paths.items():
+            if any(f.startswith(p) for f in files for p in prefixes):
+                return area
+        return "monitoring"
+
+    event_subjects = git("log", "--no-merges", "-25", "--pretty=format:%s").splitlines()
+    events = []
+    for idx, (dt, files) in enumerate(commits[:25]):
+        events.append({
+            "id": f"ev-{idx}",
+            "ts": iso(dt),
+            "kind": "task_done",
+            "area": area_for(files),
+            "title": (event_subjects[idx] if idx < len(event_subjects) else "Update")[:90],
+            "files": len(files),
+        })
+
+    # --- Usage & budget: learn activity pattern, track daily budget, pace. ---
+    budget_cfg = cfg.get("budget", {})
+    daily_units = budget_cfg.get("dailyUnits", 40)
+
+    # Learned usage pattern: commits per hour-of-day across all history (UTC).
+    hourly = [0] * 24
+    for dt, _ in commits:
+        hourly[dt.astimezone(timezone.utc).hour] += 1
+    peak_hour = max(range(24), key=lambda h: hourly[h]) if total_commits else now.hour
+
+    # Today's usage proxy: one unit per change today (commit + files touched).
+    today = now.date()
+    used_today = 0
+    for dt, files in commits:
+        if dt.astimezone(timezone.utc).date() == today:
+            used_today += 1 + len(files)
+    used_today = min(used_today, daily_units)
+    remaining = max(0, daily_units - used_today)
+
+    # Pace: budget left vs hours left in the day -> recommended units/hour.
+    hours_left = max(1, 24 - now.hour)
+    per_hour = round(remaining / hours_left, 1)
+    on_track = used_today <= daily_units
+    pacing = (
+        f"{remaining} of {daily_units} {budget_cfg.get('unitLabel', 'units')} left; "
+        f"~{per_hour}/hr to spread evenly over {hours_left}h. "
+        f"Peak activity hour is {peak_hour:02d}:00 UTC."
+    )
+
+    usage = {
+        "dailyBudget": daily_units,
+        "usedToday": used_today,
+        "remaining": remaining,
+        "usedPct": round(used_today / daily_units * 100) if daily_units else 0,
+        "unitLabel": budget_cfg.get("unitLabel", "work units"),
+        "peakHourUtc": peak_hour,
+        "recommendedPerHour": per_hour,
+        "onTrack": on_track,
+        "hourlyPattern": hourly,
+        "pacingNote": pacing,
+    }
+
     status = {
         "generatedAt": iso(now),
         "dataSource": "Derived from repository git history (offline, no external calls).",
@@ -161,6 +222,8 @@ def build():
             "efficiencyPct": efficiency,
             "uptimePct": 100.0,
         },
+        "usage": usage,
+        "events": events,
         "processes": processes,
         "tasks": tasks,
         "efficiencyTrend": trend,

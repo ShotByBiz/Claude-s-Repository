@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-06-26T19:00:00Z",
+  "note": "Items Claude is waiting on. Decide here; each choice gives a copy-and-relay handoff to close the loop.",
+  "items": [
+    {
+      "id": "pages-source",
+      "type": "decision",
+      "title": "Switch GitHub Pages source to \"GitHub Actions\"?",
+      "detail": "Gives a clean root URL (no /dashboard/ suffix) and auto-refreshed data on every push. Requires Settings -> Pages -> Build and deployment -> Source = GitHub Actions.",
+      "options": ["Approve", "Not now"],
+      "status": "waiting",
+      "createdAt": "2026-06-26T19:00:00Z"
+    },
+    {
+      "id": "live-approvals-backend",
+      "type": "decision",
+      "title": "Build a live approvals backend?",
+      "detail": "Lets you click Approve here and have Claude act automatically, instead of the copy-and-relay handoff. Needs a small always-on service (new infra/permission).",
+      "options": ["Yes, plan it", "Keep it static"],
+      "status": "waiting",
+      "createdAt": "2026-06-26T19:00:00Z"
+    }
+  ]
+}

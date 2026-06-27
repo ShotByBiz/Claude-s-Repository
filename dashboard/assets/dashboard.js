@@ -61,6 +61,38 @@ function renderCards(s) {
   show("cards");
 }
 
+function renderUsage(u) {
+  if (!u) return;
+  show("usagePanel");
+  document.getElementById("usageLabel").textContent = "Daily budget (" + u.unitLabel + ")";
+  document.getElementById("usageNums").textContent =
+    u.usedToday + " / " + u.dailyBudget + " used · " + u.remaining + " left";
+  const fill = document.getElementById("usageFill");
+  fill.style.width = Math.min(100, u.usedPct) + "%";
+  fill.style.background = u.usedPct >= 90 ? "var(--bad)" : u.usedPct >= 70 ? "var(--warn)" : "var(--good)";
+  const note = document.getElementById("usageNote");
+  note.textContent = (u.onTrack ? "On track. " : "Over budget. ") + u.pacingNote;
+  note.style.color = u.onTrack ? "var(--muted)" : "var(--bad)";
+
+  const peak = document.getElementById("peakHour");
+  peak.textContent = "peak " + String(u.peakHourUtc).padStart(2, "0") + ":00";
+
+  const hours = document.getElementById("hours");
+  hours.innerHTML = "";
+  const pattern = u.hourlyPattern || [];
+  const max = Math.max(1, ...pattern);
+  pattern.forEach((v, h) => {
+    const col = el("div", "hour");
+    const bar = el("div", "hour-bar");
+    bar.style.height = Math.round((v / max) * 100) + "%";
+    if (h === u.peakHourUtc) bar.classList.add("peak");
+    bar.title = String(h).padStart(2, "0") + ":00 — " + v;
+    col.appendChild(bar);
+    if (h % 6 === 0) col.appendChild(el("span", "hour-label", String(h)));
+    hours.appendChild(col);
+  });
+}
+
 function renderTrend(series) {
   if (!Array.isArray(series) || series.length === 0) return;
   show("trendPanel");
@@ -171,6 +203,341 @@ function renderTasks(tasks) {
   }
 }
 
+// ---------- Scheduled maintenance overlay ----------
+const MAINTENANCE_URL = "data/maintenance.json";
+let countdownTimer = null;
+
+function fmt(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : d.toLocaleString();
+}
+
+function startCountdown(untilIso) {
+  const elc = document.getElementById("maintCountdown");
+  if (!untilIso) { elc.textContent = ""; return; }
+  const until = new Date(untilIso).getTime();
+  if (Number.isNaN(until)) { elc.textContent = ""; return; }
+  function tick() {
+    const diff = until - Date.now();
+    if (diff <= 0) {
+      elc.textContent = "Maintenance window has ended — refresh to reconnect.";
+      if (countdownTimer) clearInterval(countdownTimer);
+      return;
+    }
+    const h = Math.floor(diff / 3.6e6);
+    const m = Math.floor((diff % 3.6e6) / 6e4);
+    const s = Math.floor((diff % 6e4) / 1e3);
+    elc.textContent = "Expected back in " +
+      String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+  tick();
+  if (countdownTimer) clearInterval(countdownTimer);
+  countdownTimer = setInterval(tick, 1000);
+}
+
+function showOverlay() {
+  document.getElementById("maintenance").hidden = false;
+  document.getElementById("staleBanner").hidden = true;
+  document.body.classList.add("maint-locked");
+}
+
+function bypassOverlay() {
+  document.getElementById("maintenance").hidden = true;
+  document.getElementById("staleBanner").hidden = false;
+  document.body.classList.remove("maint-locked");
+}
+
+async function loadMaintenance() {
+  let m = null;
+  try {
+    const res = await fetch(MAINTENANCE_URL, { cache: "no-store" });
+    if (res.ok) m = await res.json();
+  } catch (_) { /* no maintenance file => site open */ }
+
+  const active = m && m.enabled === true;
+  if (!active) {
+    document.getElementById("maintenance").hidden = true;
+    document.getElementById("staleBanner").hidden = true;
+    document.body.classList.remove("maint-locked");
+    return;
+  }
+
+  document.getElementById("maintTitle").textContent = m.title || "Scheduled Maintenance";
+  document.getElementById("maintMessage").textContent = m.message || "";
+  const win = document.getElementById("maintWindow");
+  win.textContent = (m.from || m.until)
+    ? "Window: " + fmt(m.from) + (m.until ? " → " + fmt(m.until) : "")
+    : "";
+  startCountdown(m.until);
+
+  const bypassBtn = document.getElementById("maintBypass");
+  bypassBtn.textContent = m.bypassLabel || "View last active stats";
+  bypassBtn.style.display = m.allowBypass === false ? "none" : "";
+
+  showOverlay();
+}
+
+// ---------- Approvals inbox ("on your desk") ----------
+const PENDING_URL = "data/pending.json";
+const REPO_ISSUES = "https://github.com/ShotByBiz/Claude-s-Repository/issues/new";
+
+function decisionKey(id) { return "decision:" + id; }
+
+function renderDesk(data) {
+  const items = (data && data.items) || [];
+  window.__deskWaiting = items.filter((it) =>
+    it.status === "waiting" && !localStorage.getItem(decisionKey(it.id))).length;
+  document.getElementById("deskCount").textContent = items.length;
+  if (data && data.note) document.getElementById("deskSub").textContent = data.note;
+  show("deskPanel");
+  const wrap = document.getElementById("deskItems");
+  wrap.innerHTML = "";
+  if (!items.length) {
+    wrap.appendChild(el("p", "desk-empty", "Nothing waiting — your desk is clear. ✅"));
+    return;
+  }
+  items.forEach((it) => wrap.appendChild(deskCard(it)));
+}
+
+function deskCard(it) {
+  const card = el("div", "desk-card");
+  const saved = localStorage.getItem(decisionKey(it.id));
+  card.appendChild(el("div", "desk-title", it.title));
+  if (it.detail) card.appendChild(el("div", "desk-detail", it.detail));
+  if (saved) {
+    card.classList.add("decided");
+    renderDecided(card, it, JSON.parse(saved));
+  } else {
+    const actions = el("div", "desk-actions");
+    (it.options || ["Approve", "Deny"]).forEach((opt, i) => {
+      const b = el("button", "desk-btn" + (i === 0 ? " primary" : ""), opt);
+      b.addEventListener("click", () => decide(card, it, opt));
+      actions.appendChild(b);
+    });
+    card.appendChild(actions);
+  }
+  return card;
+}
+
+function decide(card, it, choice) {
+  const rec = { choice, at: new Date().toISOString() };
+  localStorage.setItem(decisionKey(it.id), JSON.stringify(rec));
+  card.classList.add("decided");
+  const a = card.querySelector(".desk-actions");
+  if (a) a.remove();
+  renderDecided(card, it, rec);
+  burst();
+}
+
+function renderDecided(card, it, rec) {
+  const relay = "[decision] " + it.id + ": " + rec.choice;
+  const box = el("div", "desk-decided");
+  box.appendChild(el("span", "desk-chosen", "✓ You chose: " + rec.choice));
+  const copyBtn = el("button", "desk-btn small", "Copy & relay to Claude");
+  copyBtn.addEventListener("click", () => {
+    if (navigator.clipboard) navigator.clipboard.writeText(relay);
+    copyBtn.textContent = "Copied ✓ — paste in chat";
+  });
+  box.appendChild(copyBtn);
+  const link = el("a", "desk-link", "or open a GitHub issue");
+  link.href = REPO_ISSUES + "?title=" + encodeURIComponent("Decision: " + it.id) +
+              "&body=" + encodeURIComponent(relay);
+  link.target = "_blank"; link.rel = "noopener";
+  box.appendChild(link);
+  const undo = el("button", "desk-btn small ghost", "Undo");
+  undo.addEventListener("click", () => { localStorage.removeItem(decisionKey(it.id)); loadPending(); });
+  box.appendChild(undo);
+  card.appendChild(box);
+}
+
+async function loadPending() {
+  try {
+    const res = await fetch(PENDING_URL, { cache: "no-store" });
+    if (!res.ok) return;
+    renderDesk(await res.json());
+  } catch (_) { /* desk is optional */ }
+}
+
+// ---------- Narration (plain-English + optional browser voice) ----------
+function narrate(text, speak) {
+  const node = document.getElementById("narrText");
+  if (node) node.textContent = text;
+  const voiceOn = document.getElementById("voiceToggle");
+  if (speak && voiceOn && voiceOn.checked && "speechSynthesis" in window) {
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 1.02; u.pitch = 1.0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } catch (_) { /* voice optional */ }
+  }
+}
+
+function narrateSummary(d) {
+  const s = d.summary || {};
+  const latest = (d.events && d.events[0]) ? d.events[0].title : null;
+  const desk = (window.__deskWaiting != null) ? window.__deskWaiting : 0;
+  let line = `Monitoring ${s.activeProcesses ?? 0} active processes at ` +
+    `${s.efficiencyPct ?? 0}% efficiency. ${s.completedTasks ?? 0} tasks completed`;
+  if (latest) line += `, most recently “${latest}”`;
+  line += ". ";
+  line += desk > 0
+    ? `${desk} item${desk === 1 ? "" : "s"} waiting on your desk.`
+    : "Your desk is clear.";
+  narrate(line, false);
+}
+
+// ---------- Depth starfield (pseudo-3D background for the feed) ----------
+let starsStarted = false;
+function startStars() {
+  if (starsStarted) return;
+  const canvas = document.getElementById("stars");
+  const stage = document.getElementById("feedStage");
+  if (!canvas || !stage) return;
+  starsStarted = true;
+  const ctx = canvas.getContext("2d");
+  let stars = [];
+  function resize() {
+    canvas.width = stage.clientWidth;
+    canvas.height = stage.clientHeight;
+    const count = Math.max(40, Math.floor(canvas.width / 12));
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      z: Math.random(),            // depth 0..1
+    }));
+  }
+  resize();
+  window.addEventListener("resize", resize);
+  (function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const st of stars) {
+      st.x -= (0.2 + st.z * 0.9);          // parallax: nearer = faster
+      if (st.x < 0) { st.x = canvas.width; st.y = Math.random() * canvas.height; }
+      const r = 0.4 + st.z * 1.8;
+      ctx.globalAlpha = 0.12 + st.z * 0.35;
+      ctx.fillStyle = st.z > 0.7 ? "#58a6ff" : "#8b97a7";
+      ctx.beginPath(); ctx.arc(st.x, st.y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  })();
+}
+
+// ---------- 3D pointer tilt on the feed stage ----------
+function initTilt() {
+  const stage = document.getElementById("feedStage");
+  const feed = document.getElementById("feed");
+  if (!stage || !feed) return;
+  stage.addEventListener("pointermove", (e) => {
+    const r = stage.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    feed.style.transform =
+      `rotateY(${px * 6}deg) rotateX(${-py * 6}deg)`;
+  });
+  stage.addEventListener("pointerleave", () => {
+    feed.style.transform = "rotateY(0deg) rotateX(0deg)";
+  });
+}
+
+// ---------- Live activity feed ----------
+let knownEventIds = new Set();
+let feedInitialized = false;
+let lastEvents = null;
+
+const AREA_COLORS = {
+  monitoring: "#58a6ff", optimization: "#3fb950", reporting: "#d29922",
+  integration: "#bc8cff", delivery: "#f778ba",
+};
+function areaColor(area) { return AREA_COLORS[area] || "#58a6ff"; }
+
+function feedCard(ev) {
+  const card = el("div", "feed-item");
+  card.style.setProperty("--accent", areaColor(ev.area));
+  const ring = el("div", "feed-ring");
+  ring.innerHTML =
+    '<svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="16"></circle>' +
+    '<circle class="fg" cx="18" cy="18" r="16"></circle></svg><span class="check">✓</span>';
+  card.appendChild(ring);
+  const body = el("div", "feed-body");
+  body.appendChild(el("div", "feed-title", ev.title));
+  const meta = el("div", "feed-meta");
+  meta.appendChild(el("span", "feed-area", ev.area));
+  meta.appendChild(el("span", null, " · " + (ev.files || 0) + " files · " + timeAgo(ev.ts)));
+  body.appendChild(meta);
+  card.appendChild(body);
+  return card;
+}
+
+function renderFeed(events, opts) {
+  events = events || [];
+  opts = opts || {};
+  show("feedPanel");
+  const feed = document.getElementById("feed");
+  const stagger = opts.stagger !== undefined ? opts.stagger : !feedInitialized;
+
+  if (!feedInitialized || opts.replace) {
+    feed.innerHTML = "";
+    knownEventIds = new Set();
+    events.forEach((ev, i) => {
+      const card = feedCard(ev);
+      feed.appendChild(card);
+      knownEventIds.add(ev.id);
+      if (stagger) setTimeout(() => card.classList.add("show"), i * 160);
+      else card.classList.add("show");
+    });
+    feedInitialized = true;
+  } else {
+    const incoming = events.filter((ev) => !knownEventIds.has(ev.id));
+    incoming.reverse().forEach((ev) => {
+      const card = feedCard(ev);
+      feed.prepend(card);
+      knownEventIds.add(ev.id);
+      requestAnimationFrame(() => card.classList.add("show"));
+      burst();
+      narrate("Just completed: " + ev.title, true);
+    });
+  }
+}
+
+function replayFeed() {
+  if (lastEvents) renderFeed(lastEvents, { replace: true, stagger: true });
+  burst();
+}
+
+// Completion particle burst on the feed panel's canvas overlay.
+function burst() {
+  const canvas = document.getElementById("burst");
+  const panel = document.getElementById("feedStage") || document.getElementById("feedPanel");
+  if (!canvas || !panel) return;
+  canvas.width = panel.clientWidth;
+  canvas.height = panel.clientHeight;
+  const ctx = canvas.getContext("2d");
+  const cx = canvas.width - 48, cy = 56;
+  const colors = ["#58a6ff", "#3fb950", "#d29922", "#bc8cff", "#f778ba"];
+  const parts = [];
+  for (let i = 0; i < 28; i++) {
+    const a = Math.random() * Math.PI * 2, s = 2 + Math.random() * 4.5;
+    parts.push({ x: cx, y: cy, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1.2,
+      life: 1, c: colors[i % colors.length] });
+  }
+  let frame = 0;
+  (function anim() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    parts.forEach((p) => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.13; p.life -= 0.024;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.c;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    if (++frame < 48) requestAnimationFrame(anim);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  })();
+}
+
 async function load() {
   const loading = document.getElementById("loading");
   try {
@@ -181,10 +548,16 @@ async function load() {
     loading.hidden = true;
     renderMode(d);
     if (d.summary) renderCards(d.summary);
+    renderUsage(d.usage);
+    lastEvents = d.events || [];
+    renderFeed(lastEvents);
+    startStars();
+    initTilt();
     renderTrend(d.efficiencyTrend);
     renderAreas(d.areas);
     renderProcesses(d.processes);
     renderTasks(d.tasks);
+    narrateSummary(d);
 
     const gen = document.getElementById("generatedAt");
     gen.textContent = "Generated: " + (d.generatedAt ? new Date(d.generatedAt).toLocaleString() : "—");
@@ -205,5 +578,13 @@ function syncAutoRefresh() {
 
 document.getElementById("refresh").addEventListener("click", load);
 document.getElementById("autoRefresh").addEventListener("change", syncAutoRefresh);
+document.getElementById("replayBtn").addEventListener("click", replayFeed);
+document.getElementById("liveToggle").addEventListener("change", (e) => {
+  document.getElementById("liveDot").classList.toggle("off", !e.target.checked);
+});
+document.getElementById("maintBypass").addEventListener("click", bypassOverlay);
+document.getElementById("reEnterMaint").addEventListener("click", showOverlay);
 syncAutoRefresh();
+loadMaintenance();
+loadPending();
 load();

@@ -1,4 +1,10 @@
-name: Deploy dashboard to GitHub Pages
+name: Build dashboard
+
+# Validates the dashboard and publishes it as a downloadable artifact.
+# No GitHub Pages deploy here: Pages is served in "branch" mode straight
+# from the repo (Settings -> Pages), which is independent of Actions. Tying
+# the job to the github-pages environment caused startup failures on
+# non-default branches due to environment protection rules, so it's gone.
 
 on:
   push:
@@ -8,19 +14,10 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,11 +27,15 @@ jobs:
           python-version: "3.x"
       - name: Generate dashboard data from git history
         run: python3 dashboard/generate_status.py
-      - uses: actions/configure-pages@v5
+      - name: Validate dashboard
+        run: |
+          python3 -c "import json; json.load(open('dashboard/data/status.json')); print('status.json OK')"
+          python3 -c "import json; json.load(open('dashboard/data/pending.json')); print('pending.json OK')"
+          test -f dashboard/index.html
+          test -f dashboard/assets/dashboard.js
+          test -f dashboard/assets/dashboard.css
+      - name: Upload dashboard artifact
+        uses: actions/upload-artifact@v4
         with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
+          name: cowork-dashboard
           path: dashboard
-      - id: deployment
-        uses: actions/deploy-pages@v4

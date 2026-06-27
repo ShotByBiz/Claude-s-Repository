@@ -8,6 +8,23 @@
   <link rel="stylesheet" href="assets/dashboard.css" />
 </head>
 <body>
+  <div id="maintenance" class="maintenance" hidden>
+    <div class="maint-card">
+      <div class="maint-icon">🛠️</div>
+      <h1 id="maintTitle">Scheduled Maintenance</h1>
+      <p id="maintMessage"></p>
+      <div class="maint-window" id="maintWindow"></div>
+      <div class="maint-countdown" id="maintCountdown"></div>
+      <button id="maintBypass" type="button" class="maint-bypass">View last active stats</button>
+      <p class="maint-fineprint">Stats shown after bypass reflect the last active snapshot.</p>
+    </div>
+  </div>
+
+  <div id="staleBanner" class="stale-banner" hidden>
+    🛠️ Maintenance mode — showing the last active stats (may be out of date).
+    <button id="reEnterMaint" type="button">Back to maintenance notice</button>
+  </div>
+
   <header class="topbar">
     <div class="brand">
       <span class="dot"></span>
@@ -21,7 +38,52 @@
 
     <section class="mode-note" id="modeNote" hidden></section>
 
+    <section class="panel desk" id="deskPanel" hidden>
+      <h2>📋 On your desk <span class="badge" id="deskCount">0</span></h2>
+      <p class="desk-sub" id="deskSub">Questions and actions waiting on you. Decide here.</p>
+      <div id="deskItems"></div>
+    </section>
+
     <section class="cards" id="cards" hidden></section>
+
+    <section class="panel feed-panel" id="feedPanel" hidden>
+      <div class="feed-header">
+        <h2>Live activity</h2>
+        <div class="feed-controls">
+          <span class="live-dot" id="liveDot" title="live"></span>
+          <button id="replayBtn" type="button">▶ Replay</button>
+          <label class="auto"><input type="checkbox" id="liveToggle" checked /> Live</label>
+        </div>
+      </div>
+      <div class="narration" id="narration">
+        <span class="narr-icon">🗣️</span>
+        <span id="narrText">Booting narrator…</span>
+        <label class="auto narr-voice"><input type="checkbox" id="voiceToggle" /> 🔊 Voice</label>
+      </div>
+      <div class="feed-stage" id="feedStage">
+        <canvas id="stars" class="stars-canvas"></canvas>
+        <canvas id="burst" class="burst-canvas"></canvas>
+        <div id="feed" class="feed feed-3d"></div>
+      </div>
+    </section>
+
+    <section class="panel" id="usagePanel" hidden>
+      <h2>Usage &amp; budget</h2>
+      <div class="usage-top">
+        <div class="usage-budget">
+          <div class="usage-head">
+            <span id="usageLabel">Daily budget</span>
+            <span id="usageNums">—</span>
+          </div>
+          <div class="area-bar"><span id="usageFill"></span></div>
+          <p class="usage-note" id="usageNote"></p>
+        </div>
+      </div>
+      <div class="usage-pattern">
+        <div class="usage-head"><span>Learned activity pattern (by hour, UTC)</span><span id="peakHour"></span></div>
+        <div class="hours" id="hours"></div>
+      </div>
+    </section>
 
     <section class="grid">
       <div class="panel" id="trendPanel" hidden>

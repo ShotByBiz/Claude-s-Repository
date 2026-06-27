@@ -5,6 +5,8 @@
   "account": "shotbybizllc@gmail.com",
   "repo": "ShotByBiz/Claude-s-Repository",
   "subjectPrefix": "Usage credit consideration — failed runs",
+  "autoSubmit": false,
+  "webhookUrl": "",
   "reports": [
     {
       "id": "inc-pages-not-enabled",

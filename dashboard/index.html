@@ -49,7 +49,10 @@
     <section class="panel incidents" id="incidentsPanel" hidden>
       <div class="feed-header">
         <h2>Incident reports — credit recovery <span class="badge" id="incCount">0</span></h2>
-        <button id="submitAll" type="button" class="desk-btn primary">✉ Approve &amp; submit all</button>
+        <div class="feed-controls">
+          <label class="auto" title="When ON and a webhook is set, submit sends automatically instead of opening email"><input type="checkbox" id="autoSendToggle" /> ⚡ Auto-send</label>
+          <button id="submitAll" type="button" class="desk-btn primary">✉ Approve &amp; submit all</button>
+        </div>
       </div>
       <p class="desk-sub" id="incSub">One click opens a pre-filled email to support with the report. You just hit Send.</p>
       <div id="incItems"></div>

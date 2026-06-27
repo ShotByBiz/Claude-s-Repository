@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-27T03:00:25Z",
+  "generatedAt": "2026-06-27T08:56:28Z",
   "dataSource": "Derived from repository git history (offline, no external calls).",
   "mode": "offline",
   "modeNote": "Offline mode: tasks requiring new permissions are skipped. Effort redirected to improving existing, already-permitted work areas.",
   "summary": {
     "activeProcesses": 3,
-    "completedTasks": 10,
+    "completedTasks": 13,
     "pendingTasks": 0,
     "skippedNeedsPermission": 2,
     "efficiencyPct": 100,
@@ -13,18 +13,18 @@
   },
   "usage": {
     "dailyBudget": 40,
-    "usedToday": 20,
-    "remaining": 20,
-    "usedPct": 50,
+    "usedToday": 40,
+    "remaining": 0,
+    "usedPct": 100,
     "unitLabel": "work units",
     "peakHourUtc": 18,
-    "recommendedPerHour": 1.0,
+    "recommendedPerHour": 0.0,
     "onTrack": true,
     "hourlyPattern": [
       0,
       0,
-      4,
-      0,
+      5,
+      1,
       0,
       0,
       0,
@@ -40,17 +40,33 @@
       0,
       0,
       6,
-      0,
+      1,
       0,
       0,
       0,
       0
     ],
-    "pacingNote": "20 of 40 work units left; ~1.0/hr to spread evenly over 21h. Peak activity hour is 18:00 UTC."
+    "pacingNote": "0 of 40 work units left; ~0.0/hr to spread evenly over 16h. Peak activity hour is 18:00 UTC."
   },
   "events": [
     {
       "id": "ev-0",
+      "ts": "2026-06-27T03:00:34Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Add real WebGL 3D activity universe (vendored Three.js)",
+      "files": 6
+    },
+    {
+      "id": "ev-1",
+      "ts": "2026-06-27T02:49:11Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Approvals inbox, animated live feed, maintenance overlay, narration + pseudo-3D",
+      "files": 12
+    },
+    {
+      "id": "ev-2",
       "ts": "2026-06-27T02:48:34Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -58,7 +74,7 @@
       "files": 5
     },
     {
-      "id": "ev-1",
+      "id": "ev-3",
       "ts": "2026-06-27T02:32:24Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -66,7 +82,7 @@
       "files": 1
     },
     {
-      "id": "ev-2",
+      "id": "ev-4",
       "ts": "2026-06-27T02:28:26Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -74,7 +90,7 @@
       "files": 4
     },
     {
-      "id": "ev-3",
+      "id": "ev-5",
       "ts": "2026-06-27T02:26:01Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -82,7 +98,15 @@
       "files": 6
     },
     {
-      "id": "ev-4",
+      "id": "ev-6",
+      "ts": "2026-06-26T19:03:58Z",
+      "kind": "task_done",
+      "area": "monitoring",
+      "title": "Create jekyll-gh-pages.yml",
+      "files": 1
+    },
+    {
+      "id": "ev-7",
       "ts": "2026-06-26T18:55:12Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -90,7 +114,7 @@
       "files": 1
     },
     {
-      "id": "ev-5",
+      "id": "ev-8",
       "ts": "2026-06-26T18:53:43Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -98,7 +122,7 @@
       "files": 7
     },
     {
-      "id": "ev-6",
+      "id": "ev-9",
       "ts": "2026-06-26T18:49:38Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -106,7 +130,7 @@
       "files": 3
     },
     {
-      "id": "ev-7",
+      "id": "ev-10",
       "ts": "2026-06-26T18:40:32Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -114,7 +138,7 @@
       "files": 8
     },
     {
-      "id": "ev-8",
+      "id": "ev-11",
       "ts": "2026-06-26T18:34:28Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -122,7 +146,7 @@
       "files": 6
     },
     {
-      "id": "ev-9",
+      "id": "ev-12",
       "ts": "2026-06-26T18:17:18Z",
       "kind": "task_done",
       "area": "monitoring",
@@ -137,7 +161,7 @@
       "area": "monitoring",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-27T02:48:34Z",
+      "lastTickIso": "2026-06-27T03:00:34Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Derives live status from git history (offline-capable)."
@@ -148,7 +172,7 @@
       "area": "optimization",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-27T02:48:34Z",
+      "lastTickIso": "2026-06-27T03:00:34Z",
       "throughputPerMin": 3,
       "needsNewPermission": false,
       "note": "Scores work areas from recent commit activity."
@@ -159,7 +183,7 @@
       "area": "reporting",
       "status": "running",
       "health": "good",
-      "lastTickIso": "2026-06-27T03:00:25Z",
+      "lastTickIso": "2026-06-27T08:56:28Z",
       "throughputPerMin": 1,
       "needsNewPermission": false,
       "note": "Renders this dashboard from generated status.json."
@@ -190,35 +214,35 @@
   "tasks": [
     {
       "id": "c-0",
-      "title": "Add scheduled-maintenance overlay, narration, and pseudo-3D feed",
+      "title": "Add real WebGL 3D activity universe (vendored Three.js)",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-1",
-      "title": "Refresh generated dashboard data",
+      "title": "Approvals inbox, animated live feed, maintenance overlay, narration + pseudo-3D",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-2",
-      "title": "Fix CI startup failure; make bare Pages URL work in branch mode",
+      "title": "Add scheduled-maintenance overlay, narration, and pseudo-3D feed",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-3",
-      "title": "Add approvals inbox ('on your desk') and animated live activity feed",
+      "title": "Refresh generated dashboard data",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
     },
     {
       "id": "c-4",
-      "title": "Make CI green and Pages deploy self-activating",
+      "title": "Fix CI startup failure; make bare Pages URL work in branch mode",
       "area": "monitoring",
       "status": "done",
       "needsNewPermission": false
@@ -258,7 +282,7 @@
     },
     {
       "name": "optimization",
-      "score": 90,
+      "score": 100,
       "improving": true
     },
     {

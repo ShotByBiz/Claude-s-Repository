@@ -359,6 +359,101 @@ async function loadPending() {
   } catch (_) { /* desk is optional */ }
 }
 
+// ---------- Incident reports — one-click credit-recovery submission ----------
+const INCIDENTS_URL = "data/incidents.json";
+let incidentsCfg = null;
+
+function incKey(id) { return "incident:" + id; }
+
+function incidentBody(cfg, reports) {
+  const lines = [];
+  lines.push("To: Anthropic Support");
+  lines.push("Account: " + (cfg.account || ""));
+  lines.push("Repository: " + (cfg.repo || ""));
+  lines.push("");
+  lines.push("Requesting reasonable usage-credit consideration for the failed");
+  lines.push("runs below. Root causes were platform/environment/config, not");
+  lines.push("feature work. GitHub Actions run IDs are included for verification.");
+  lines.push("");
+  reports.forEach((r, i) => {
+    lines.push((i + 1) + ". " + r.title);
+    lines.push("   When: " + r.when + "  |  Ref: " + r.run + "  |  Fault: " + r.fault);
+    lines.push("   Error: " + r.error);
+    lines.push("   Root cause: " + r.rootCause);
+    lines.push("");
+  });
+  return lines.join("\n");
+}
+
+function submitIncidents(reports) {
+  if (!incidentsCfg || !reports.length) return;
+  const subject = incidentsCfg.subjectPrefix + " (" + incidentsCfg.repo + ")";
+  const body = incidentBody(incidentsCfg, reports);
+  if (navigator.clipboard) navigator.clipboard.writeText(body);
+  const mailto = "mailto:" + encodeURIComponent(incidentsCfg.recipient) +
+    "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  window.open(mailto, "_blank");
+  reports.forEach((r) => localStorage.setItem(incKey(r.id),
+    JSON.stringify({ status: "submitted", at: new Date().toISOString() })));
+  renderIncidents(incidentsCfg);
+}
+
+function incidentCard(r) {
+  const card = el("div", "desk-card");
+  const saved = localStorage.getItem(incKey(r.id));
+  const head = el("div", "inc-head");
+  head.appendChild(el("span", "desk-title", r.title));
+  head.appendChild(el("span", "inc-fault inc-" + r.fault, r.fault));
+  card.appendChild(head);
+  card.appendChild(el("div", "desk-detail", r.when + " · ref " + r.run + " · " + r.error));
+  if (saved) {
+    card.classList.add("decided");
+    const box = el("div", "desk-decided");
+    box.appendChild(el("span", "desk-chosen", "✓ Submitted (opened in your mail app)"));
+    const undo = el("button", "desk-btn small ghost", "Undo");
+    undo.addEventListener("click", () => { localStorage.removeItem(incKey(r.id)); renderIncidents(incidentsCfg); });
+    box.appendChild(undo);
+    card.appendChild(box);
+  } else {
+    const actions = el("div", "desk-actions");
+    const b = el("button", "desk-btn primary", "✉ Approve & submit");
+    b.addEventListener("click", () => submitIncidents([r]));
+    actions.appendChild(b);
+    const copy = el("button", "desk-btn small", "Copy report");
+    copy.addEventListener("click", () => {
+      if (navigator.clipboard) navigator.clipboard.writeText(incidentBody(incidentsCfg, [r]));
+      copy.textContent = "Copied ✓";
+    });
+    actions.appendChild(copy);
+    card.appendChild(actions);
+  }
+  return card;
+}
+
+function renderIncidents(cfg) {
+  const reports = (cfg && cfg.reports) || [];
+  const ready = reports.filter((r) => !localStorage.getItem(incKey(r.id)));
+  document.getElementById("incCount").textContent = ready.length;
+  const wrap = document.getElementById("incItems");
+  wrap.innerHTML = "";
+  if (!reports.length) { wrap.appendChild(el("p", "desk-empty", "No incident reports.")); return; }
+  reports.forEach((r) => wrap.appendChild(incidentCard(r)));
+  const allBtn = document.getElementById("submitAll");
+  allBtn.disabled = ready.length === 0;
+  allBtn.textContent = ready.length ? "✉ Approve & submit all (" + ready.length + ")" : "All submitted ✓";
+}
+
+async function loadIncidents() {
+  try {
+    const res = await fetch(INCIDENTS_URL, { cache: "no-store" });
+    if (!res.ok) return;
+    incidentsCfg = await res.json();
+    document.getElementById("incidentsPanel").hidden = false;
+    if (incidentsCfg.note) document.getElementById("incSub").textContent = incidentsCfg.note;
+    renderIncidents(incidentsCfg);
+  } catch (_) { /* optional */ }
+}
+
 // ---------- Narration (plain-English + optional browser voice) ----------
 function narrate(text, speak) {
   const node = document.getElementById("narrText");
@@ -598,7 +693,13 @@ document.getElementById("liveToggle").addEventListener("change", (e) => {
 });
 document.getElementById("maintBypass").addEventListener("click", bypassOverlay);
 document.getElementById("reEnterMaint").addEventListener("click", showOverlay);
+document.getElementById("submitAll").addEventListener("click", () => {
+  if (!incidentsCfg) return;
+  const ready = incidentsCfg.reports.filter((r) => !localStorage.getItem(incKey(r.id)));
+  submitIncidents(ready);
+});
 syncAutoRefresh();
 loadMaintenance();
 loadPending();
+loadIncidents();
 load();

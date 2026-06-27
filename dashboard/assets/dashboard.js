@@ -203,6 +203,81 @@ function renderTasks(tasks) {
   }
 }
 
+// ---------- Scheduled maintenance overlay ----------
+const MAINTENANCE_URL = "data/maintenance.json";
+let countdownTimer = null;
+
+function fmt(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : d.toLocaleString();
+}
+
+function startCountdown(untilIso) {
+  const elc = document.getElementById("maintCountdown");
+  if (!untilIso) { elc.textContent = ""; return; }
+  const until = new Date(untilIso).getTime();
+  if (Number.isNaN(until)) { elc.textContent = ""; return; }
+  function tick() {
+    const diff = until - Date.now();
+    if (diff <= 0) {
+      elc.textContent = "Maintenance window has ended — refresh to reconnect.";
+      if (countdownTimer) clearInterval(countdownTimer);
+      return;
+    }
+    const h = Math.floor(diff / 3.6e6);
+    const m = Math.floor((diff % 3.6e6) / 6e4);
+    const s = Math.floor((diff % 6e4) / 1e3);
+    elc.textContent = "Expected back in " +
+      String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+  tick();
+  if (countdownTimer) clearInterval(countdownTimer);
+  countdownTimer = setInterval(tick, 1000);
+}
+
+function showOverlay() {
+  document.getElementById("maintenance").hidden = false;
+  document.getElementById("staleBanner").hidden = true;
+  document.body.classList.add("maint-locked");
+}
+
+function bypassOverlay() {
+  document.getElementById("maintenance").hidden = true;
+  document.getElementById("staleBanner").hidden = false;
+  document.body.classList.remove("maint-locked");
+}
+
+async function loadMaintenance() {
+  let m = null;
+  try {
+    const res = await fetch(MAINTENANCE_URL, { cache: "no-store" });
+    if (res.ok) m = await res.json();
+  } catch (_) { /* no maintenance file => site open */ }
+
+  const active = m && m.enabled === true;
+  if (!active) {
+    document.getElementById("maintenance").hidden = true;
+    document.getElementById("staleBanner").hidden = true;
+    document.body.classList.remove("maint-locked");
+    return;
+  }
+
+  document.getElementById("maintTitle").textContent = m.title || "Scheduled Maintenance";
+  document.getElementById("maintMessage").textContent = m.message || "";
+  const win = document.getElementById("maintWindow");
+  win.textContent = (m.from || m.until)
+    ? "Window: " + fmt(m.from) + (m.until ? " → " + fmt(m.until) : "")
+    : "";
+  startCountdown(m.until);
+
+  const bypassBtn = document.getElementById("maintBypass");
+  bypassBtn.textContent = m.bypassLabel || "View last active stats";
+  bypassBtn.style.display = m.allowBypass === false ? "none" : "";
+
+  showOverlay();
+}
+
 // ---------- Approvals inbox ("on your desk") ----------
 const PENDING_URL = "data/pending.json";
 const REPO_ISSUES = "https://github.com/ShotByBiz/Claude-s-Repository/issues/new";
@@ -211,6 +286,8 @@ function decisionKey(id) { return "decision:" + id; }
 
 function renderDesk(data) {
   const items = (data && data.items) || [];
+  window.__deskWaiting = items.filter((it) =>
+    it.status === "waiting" && !localStorage.getItem(decisionKey(it.id))).length;
   document.getElementById("deskCount").textContent = items.length;
   if (data && data.note) document.getElementById("deskSub").textContent = data.note;
   show("deskPanel");
@@ -282,6 +359,89 @@ async function loadPending() {
   } catch (_) { /* desk is optional */ }
 }
 
+// ---------- Narration (plain-English + optional browser voice) ----------
+function narrate(text, speak) {
+  const node = document.getElementById("narrText");
+  if (node) node.textContent = text;
+  const voiceOn = document.getElementById("voiceToggle");
+  if (speak && voiceOn && voiceOn.checked && "speechSynthesis" in window) {
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 1.02; u.pitch = 1.0;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+    } catch (_) { /* voice optional */ }
+  }
+}
+
+function narrateSummary(d) {
+  const s = d.summary || {};
+  const latest = (d.events && d.events[0]) ? d.events[0].title : null;
+  const desk = (window.__deskWaiting != null) ? window.__deskWaiting : 0;
+  let line = `Monitoring ${s.activeProcesses ?? 0} active processes at ` +
+    `${s.efficiencyPct ?? 0}% efficiency. ${s.completedTasks ?? 0} tasks completed`;
+  if (latest) line += `, most recently “${latest}”`;
+  line += ". ";
+  line += desk > 0
+    ? `${desk} item${desk === 1 ? "" : "s"} waiting on your desk.`
+    : "Your desk is clear.";
+  narrate(line, false);
+}
+
+// ---------- Depth starfield (pseudo-3D background for the feed) ----------
+let starsStarted = false;
+function startStars() {
+  if (starsStarted) return;
+  const canvas = document.getElementById("stars");
+  const stage = document.getElementById("feedStage");
+  if (!canvas || !stage) return;
+  starsStarted = true;
+  const ctx = canvas.getContext("2d");
+  let stars = [];
+  function resize() {
+    canvas.width = stage.clientWidth;
+    canvas.height = stage.clientHeight;
+    const count = Math.max(40, Math.floor(canvas.width / 12));
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      z: Math.random(),            // depth 0..1
+    }));
+  }
+  resize();
+  window.addEventListener("resize", resize);
+  (function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const st of stars) {
+      st.x -= (0.2 + st.z * 0.9);          // parallax: nearer = faster
+      if (st.x < 0) { st.x = canvas.width; st.y = Math.random() * canvas.height; }
+      const r = 0.4 + st.z * 1.8;
+      ctx.globalAlpha = 0.12 + st.z * 0.35;
+      ctx.fillStyle = st.z > 0.7 ? "#58a6ff" : "#8b97a7";
+      ctx.beginPath(); ctx.arc(st.x, st.y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  })();
+}
+
+// ---------- 3D pointer tilt on the feed stage ----------
+function initTilt() {
+  const stage = document.getElementById("feedStage");
+  const feed = document.getElementById("feed");
+  if (!stage || !feed) return;
+  stage.addEventListener("pointermove", (e) => {
+    const r = stage.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    feed.style.transform =
+      `rotateY(${px * 6}deg) rotateX(${-py * 6}deg)`;
+  });
+  stage.addEventListener("pointerleave", () => {
+    feed.style.transform = "rotateY(0deg) rotateX(0deg)";
+  });
+}
+
 // ---------- Live activity feed ----------
 let knownEventIds = new Set();
 let feedInitialized = false;
@@ -337,6 +497,7 @@ function renderFeed(events, opts) {
       knownEventIds.add(ev.id);
       requestAnimationFrame(() => card.classList.add("show"));
       burst();
+      narrate("Just completed: " + ev.title, true);
     });
   }
 }
@@ -349,7 +510,7 @@ function replayFeed() {
 // Completion particle burst on the feed panel's canvas overlay.
 function burst() {
   const canvas = document.getElementById("burst");
-  const panel = document.getElementById("feedPanel");
+  const panel = document.getElementById("feedStage") || document.getElementById("feedPanel");
   if (!canvas || !panel) return;
   canvas.width = panel.clientWidth;
   canvas.height = panel.clientHeight;
@@ -390,10 +551,13 @@ async function load() {
     renderUsage(d.usage);
     lastEvents = d.events || [];
     renderFeed(lastEvents);
+    startStars();
+    initTilt();
     renderTrend(d.efficiencyTrend);
     renderAreas(d.areas);
     renderProcesses(d.processes);
     renderTasks(d.tasks);
+    narrateSummary(d);
 
     const gen = document.getElementById("generatedAt");
     gen.textContent = "Generated: " + (d.generatedAt ? new Date(d.generatedAt).toLocaleString() : "—");
@@ -418,6 +582,9 @@ document.getElementById("replayBtn").addEventListener("click", replayFeed);
 document.getElementById("liveToggle").addEventListener("change", (e) => {
   document.getElementById("liveDot").classList.toggle("off", !e.target.checked);
 });
+document.getElementById("maintBypass").addEventListener("click", bypassOverlay);
+document.getElementById("reEnterMaint").addEventListener("click", showOverlay);
 syncAutoRefresh();
+loadMaintenance();
 loadPending();
 load();

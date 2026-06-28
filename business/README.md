@@ -1,4 +1,24 @@
-# Voice Receptionist — Business-in-a-Box
+# AI Agent Business Portfolio
+
+Deployable starter kits for **all five** business models from the operator brief,
+plus a scorecard that ranks them. Start with `PORTFOLIO.md` for the keep/kill
+verdict, then dive into a model.
+
+| Dir | Model | Status |
+|-----|-------|--------|
+| `voice-receptionist/` | 1. Voice Receptionist | **Run now** (bundle w/ #4) |
+| `appointment-reminders/` | 4. Reminders / no-show killer | **Run now** (top-ranked) |
+| `outbound-sales-agent/` | 2. Outbound sales agent | Build next |
+| `content-leadgen/` | 3. Content + lead gen | Defer |
+| `meta-agent/` | 5. Self-demo meta-agent flywheel | Build last |
+| `tools/evaluate_models.py` | Weighted scorecard | `python3` it |
+
+The Voice Receptionist kit below is the most fleshed-out (Model #1) and the
+template for how each model is structured.
+
+---
+
+## Voice Receptionist — Business-in-a-Box
 
 A complete, deployable starter kit for an **AI Voice Receptionist service** sold
 to local service businesses (dentists, plumbers, HVAC, law firms, salons, real

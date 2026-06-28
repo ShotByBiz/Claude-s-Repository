@@ -15,9 +15,10 @@ Deployable starter kits across multiple revenue streams. **Start with
 | E. Outbound + meta-agent | `outbound-sales-agent/`, `meta-agent/` | Later | Build on proof |
 
 **Ready-to-execute starting points:**
+- Post gigs today → `services/listings.md` (7 copy-paste listings; start with the 🤖 AI-complete ones)
 - Clipping day one → `clipping/first-10-hooks.md` (niche + 10 hooks)
 - A standalone product to sell → `digital-products/ebook-clipping/` (full ebook)
-- Get paid for gigs → `services/sales-automation.md` (listings, templates, intake)
+- Run the sale → `services/sales-automation.md` (proposals, intake, delivery, payment protection)
 
 ## The five agent models (the scorecard set)
 

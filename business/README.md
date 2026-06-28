@@ -1,8 +1,19 @@
 # AI Agent Business Portfolio
 
-Deployable starter kits for **all five** business models from the operator brief,
-plus a scorecard that ranks them. Start with `PORTFOLIO.md` for the keep/kill
-verdict, then dive into a model.
+Deployable starter kits across multiple revenue streams. **Start with
+[`EXECUTION.md`](EXECUTION.md)** — the priority queue sorted by speed-to-first-dollar
+(what to actually do, with the human steps only you can take). Then
+[`PORTFOLIO.md`](PORTFOLIO.md) for the agent-model keep/kill verdict.
+
+## Revenue streams (fastest cash first)
+| Stream | Dir | Speed to $ | Effort |
+|--------|-----|-----------|--------|
+| A. Clipping (pay-per-view video) | `clipping/` | Days | Low, start today |
+| B. Digital products (sell this repo) | `digital-products/` | This week | Low, made once |
+| C. "Never Miss" agent bundle | `bundle/` | This month | Medium, recurring $ |
+| D. Outbound + meta-agent | `outbound-sales-agent/`, `meta-agent/` | Later | Build on proof |
+
+## The five agent models (the scorecard set)
 
 | Dir | Model | Status |
 |-----|-------|--------|

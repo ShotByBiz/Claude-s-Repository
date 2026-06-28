@@ -9,9 +9,15 @@ Deployable starter kits across multiple revenue streams. **Start with
 | Stream | Dir | Speed to $ | Effort |
 |--------|-----|-----------|--------|
 | A. Clipping (pay-per-view video) | `clipping/` | Days | Low, start today |
-| B. Digital products (sell this repo) | `digital-products/` | This week | Low, made once |
-| C. "Never Miss" agent bundle | `bundle/` | This month | Medium, recurring $ |
-| D. Outbound + meta-agent | `outbound-sales-agent/`, `meta-agent/` | Later | Build on proof |
+| B. Digital products (ebook + toolkit) | `digital-products/` | This week | Low, made once |
+| C. Done-for-you micro-services | `services/` | This week | Per-order, near-pure margin |
+| D. "Never Miss" agent bundle | `bundle/` | This month | Medium, recurring $ |
+| E. Outbound + meta-agent | `outbound-sales-agent/`, `meta-agent/` | Later | Build on proof |
+
+**Ready-to-execute starting points:**
+- Clipping day one → `clipping/first-10-hooks.md` (niche + 10 hooks)
+- A standalone product to sell → `digital-products/ebook-clipping/` (full ebook)
+- Get paid for gigs → `services/sales-automation.md` (listings, templates, intake)
 
 ## The five agent models (the scorecard set)
 

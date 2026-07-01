@@ -1,0 +1,4 @@
+# Generated client deliverables and the order ledger stay local — they're your
+# work product / pipeline, not source. Keep the folder, ignore its contents.
+*
+!.gitignore

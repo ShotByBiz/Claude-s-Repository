@@ -15,6 +15,7 @@ Deployable starter kits across multiple revenue streams. **Start with
 | E. Outbound + meta-agent | `outbound-sales-agent/`, `meta-agent/` | Later | Build on proof |
 
 **Ready-to-execute starting points:**
+- Fulfill orders in one command → `engine/` (order intake → finished deliverable; `fulfill.py`)
 - Post gigs today → `services/listings.md` (7 copy-paste listings; start with the 🤖 AI-complete ones)
 - Clipping day one → `clipping/first-10-hooks.md` (niche + 10 hooks)
 - A standalone product to sell → `digital-products/ebook-clipping/` (full ebook)

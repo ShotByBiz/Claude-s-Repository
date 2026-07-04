@@ -6,10 +6,17 @@ a **brand-new gig-agent** is also one command. This is what turns the service
 business from "you do every step" into "you approve and collect."
 
 ## What it does
-- `list` — show the gig-agents you can fulfill.
+- `status` — readiness doctor: LIVE vs OFFLINE, key/SDK, agents, orders, revenue.
+- `list` — show the gig-agents you can fulfill (9 built in).
 - `fulfill --gig <id> --intake <file|->` — produce the complete deliverable for an
   order and write it to `orders/<gig>-<n>.md`, logging it to `orders/ledger.csv`.
+  Add `--price <amt> [--buyer name]` to log a **real** paid sale.
+- `revenue` — total real sales logged (honest $0 until a real order is paid).
 - `scaffold --id <id> --name <name>` — generate a new gig-agent entry to drop in.
+
+## Built-in gig-agents (9)
+prompt-pack · short-form-script · youtube-script · seo-blog · resume ·
+ad-copy · product-descriptions · email-sequence · cold-email
 
 ## Quick start
 ```bash

@@ -1,9 +1,10 @@
 # AI Agent Business Portfolio
 
-Deployable starter kits across multiple revenue streams. **Start with
-[`EXECUTION.md`](EXECUTION.md)** — the priority queue sorted by speed-to-first-dollar
-(what to actually do, with the human steps only you can take). Then
-[`PORTFOLIO.md`](PORTFOLIO.md) for the agent-model keep/kill verdict.
+Deployable starter kits across multiple revenue streams. **New here? Read
+[`SETUP.md`](SETUP.md)** (repo → running in ~15 min) and run
+`python3 engine/fulfill.py status`. Then [`EXECUTION.md`](EXECUTION.md) — the
+priority queue sorted by speed-to-first-dollar — and [`PORTFOLIO.md`](PORTFOLIO.md)
+for the agent-model keep/kill verdict.
 
 ## Revenue streams (fastest cash first)
 | Stream | Dir | Speed to $ | Effort |

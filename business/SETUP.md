@@ -20,11 +20,11 @@ python3 business/engine/fulfill.py status  # should now say LIVE
 ```
 
 ## 2. Stand up the storefront (~1 hour, one time — you do this)
-These need *your* accounts:
-1. **Gumroad** — list the ebook (`digital-products/ebook-clipping/`, open the
-   HTML → Save as PDF) and the toolkit (`digital-products/PRODUCT-from-this-repo.md`).
-2. **Fiverr** — post the gigs from `services/listings.md` (start with the
-   🤖 AI-complete ones — those are what the engine fulfills).
+These need *your* accounts. The copy is **already written and paste-ready**:
+1. **Gumroad** — paste from `services/ready-to-post/gumroad-listings.md`
+   (toolkit $49 + clipping ebook $19, both files already built in the repo).
+2. **Fiverr** — paste from `services/ready-to-post/fiverr-gigs.md` (5 finished,
+   niche-tuned gigs with decided prices — these are what the engine fulfills).
 3. **Stripe** — a payment link, for off-platform sales.
 
 ## 3. Run the loop (per order)

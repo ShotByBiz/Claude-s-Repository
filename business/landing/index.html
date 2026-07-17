@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NeverMiss — AI Receptionist for Local Businesses</title>
+<style>
+  :root{--bg:#0b1120;--card:#121a2e;--ink:#e8eefc;--mut:#9fb0d0;--acc:#4f8cff;--ok:#33d39b}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px}
+  header{padding:18px 0;display:flex;justify-content:space-between;align-items:center}
+  .brand{font-weight:800;letter-spacing:.3px}
+  .brand span{color:var(--acc)}
+  .hero{padding:64px 0 40px;text-align:center}
+  .hero h1{font-size:clamp(30px,6vw,52px);margin:.2em 0;line-height:1.1}
+  .hero p{color:var(--mut);font-size:19px;max-width:620px;margin:14px auto 28px}
+  .cta{display:inline-block;background:var(--acc);color:#fff;text-decoration:none;font-weight:700;padding:14px 26px;border-radius:10px}
+  .cta.ghost{background:transparent;border:1px solid #2a3a5e;color:var(--ink);margin-left:10px}
+  .stats{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:34px 0}
+  .stat{background:var(--card);border:1px solid #1e2a45;border-radius:12px;padding:16px 22px;min-width:160px}
+  .stat b{display:block;font-size:26px;color:var(--ok)}
+  .stat small{color:var(--mut)}
+  section{padding:40px 0;border-top:1px solid #16203a}
+  h2{font-size:26px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid #1e2a45;border-radius:12px;padding:20px}
+  .card h3{margin:.2em 0;font-size:18px}
+  .card p{color:var(--mut);margin:.4em 0 0}
+  .price{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .tier{background:var(--card);border:1px solid #1e2a45;border-radius:14px;padding:22px;text-align:center}
+  .tier.feature{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+  .tier .amt{font-size:34px;font-weight:800}
+  .tier .amt small{font-size:14px;color:var(--mut);font-weight:400}
+  .tier ul{list-style:none;padding:0;margin:14px 0;color:var(--mut);text-align:left}
+  .tier li:before{content:"✓ ";color:var(--ok)}
+  .calc{background:var(--card);border:1px solid #1e2a45;border-radius:14px;padding:22px}
+  .calc label{display:block;color:var(--mut);font-size:14px;margin:10px 0 4px}
+  .calc input{width:100%;padding:10px;border-radius:8px;border:1px solid #2a3a5e;background:#0d1526;color:var(--ink)}
+  .result{margin-top:18px;font-size:20px}
+  .result b{color:var(--ok);font-size:28px}
+  .disc{color:#6f80a0;font-size:13px}
+  footer{padding:30px 0;color:#6f80a0;font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Never<span>Miss</span></div>
+    <a class="cta" href="#demo">Try the live demo</a>
+  </header>
+
+  <div class="hero">
+    <h1>Your phone stops costing you customers.</h1>
+    <p>An AI receptionist that answers every call 24/7, books appointments, and
+       texts you the details — so the calls you miss today turn into revenue
+       tomorrow.</p>
+    <a class="cta" href="#demo">Hear it for yourself</a>
+    <a class="cta ghost" href="#pricing">See pricing</a>
+    <div class="stats">
+      <div class="stat"><b>24/7</b><small>never a missed call</small></div>
+      <div class="stat"><b>&lt;48h</b><small>to go live</small></div>
+      <div class="stat"><b>0</b><small>contracts · cancel anytime</small></div>
+    </div>
+  </div>
+
+  <section id="how">
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="card"><h3>Answers every call</h3><p>Lunch, after hours, when the front desk is slammed — it picks up.</p></div>
+      <div class="card"><h3>Books appointments</h3><p>Straight into your calendar, with a text confirmation to the caller.</p></div>
+      <div class="card"><h3>Flags emergencies</h3><p>Urgent calls get tagged and your on-call person is paged immediately.</p></div>
+      <div class="card"><h3>Takes messages</h3><p>Anything it can't handle becomes a clean callback — nothing falls through.</p></div>
+    </div>
+  </section>
+
+  <section id="calc">
+    <h2>What are missed calls costing you?</h2>
+    <div class="calc">
+      <label>Calls per day <input id="cpd" type="number" value="20"></label>
+      <label>% you miss <input id="miss" type="number" value="27"></label>
+      <label>Avg value of a new customer ($) <input id="val" type="number" value="300"></label>
+      <label>% of answered callers who book <input id="close" type="number" value="40"></label>
+      <div class="result">You're losing about <b id="out">$0</b>/month.</div>
+      <p class="disc">Rough estimate using your inputs × 22 business days. Real numbers vary — that's what the demo is for.</p>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2>Simple pricing</h2>
+    <div class="price">
+      <div class="tier"><h3>Starter</h3><div class="amt">$197<small>/mo</small></div>
+        <ul><li>Answers calls, business hours</li><li>FAQ + message capture</li><li>Daily email summary</li></ul></div>
+      <div class="tier feature"><h3>Pro</h3><div class="amt">$297<small>/mo</small></div>
+        <ul><li>Everything in Starter</li><li>24/7 + appointment booking</li><li>After-hours emergency tagging</li><li>Weekly performance report</li></ul>
+        <a class="cta" href="#demo">Start with Pro</a></div>
+      <div class="tier"><h3>Premium</h3><div class="amt">$497<small>/mo</small></div>
+        <ul><li>Everything in Pro</li><li>SMS follow-up + reminders</li><li>CRM sync, 2 numbers</li><li>Monthly optimization call</li></ul></div>
+    </div>
+    <p class="disc">No contracts. 14-day guarantee: it answers your calls or you don't pay.</p>
+  </section>
+
+  <section id="demo">
+    <h2>Hear it for yourself</h2>
+    <p style="color:var(--mut)">The fastest way to get it: call the demo line and book a (fake)
+       appointment like a customer would. Two minutes, no signup.</p>
+    <p><a class="cta" href="tel:+10000000000">Call the demo: (set your number)</a></p>
+    <p class="disc">Replace the demo number with your provider line before publishing.</p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    NeverMiss · AI Receptionist · This is a customizable sales page template.
+    Add your business name, contact, and a CAN-SPAM-compliant mailing address
+    before going live.
+  </div>
+</footer>
+
+<script>
+  function fmt(n){return "$"+Math.round(n).toLocaleString();}
+  function calc(){
+    var cpd=+document.getElementById('cpd').value||0;
+    var miss=(+document.getElementById('miss').value||0)/100;
+    var val=+document.getElementById('val').value||0;
+    var close=(+document.getElementById('close').value||0)/100;
+    var lost = cpd*miss*22*close*val;
+    document.getElementById('out').textContent = fmt(lost);
+  }
+  ['cpd','miss','val','close'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',calc);
+  });
+  calc();
+</script>
+</body>
+</html>

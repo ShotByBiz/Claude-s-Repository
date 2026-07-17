@@ -1,0 +1,6 @@
+id,date_added,business_name,vertical,contact_name,phone,email,city_state,source,stage,monthly_price,notes
+# Stages: new -> contacted -> demo_booked -> demo_done -> proposal -> won -> lost
+# This file starts empty on purpose. Add ONE row per real lead you actually work.
+# Do not invent rows — pipeline_report.py treats every row as a real lead.
+# Example row (delete before using):
+# L001,2026-06-28,Bright Smile Dental,dental,Dr. Lee,5552048890,info@brightsmile.example,Austin TX,google_maps,new,297,Missed-call ROI ~$4k/mo

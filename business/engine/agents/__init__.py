@@ -124,6 +124,24 @@ AGENTS = {
 }
 
 
+# Credit tiering — cheapest model that does the job well (you asked to optimize
+# for credit usage, which is the explicit override to the default-Opus rule).
+# Upgrade any single order with `fulfill.py fulfill ... --model claude-opus-4-8`.
+_MODEL = {
+    "product-descriptions": "claude-haiku-4-5",   # simple, templated
+    "resume": "claude-haiku-4-5",
+    "prompt-pack": "claude-sonnet-4-6",
+    "short-form-script": "claude-sonnet-4-6",
+    "cold-email": "claude-sonnet-4-6",
+    "email-sequence": "claude-sonnet-4-6",
+    "seo-blog": "claude-sonnet-4-6",             # research-y but Sonnet handles it
+    "youtube-script": "claude-sonnet-4-6",
+    "ad-copy": "claude-sonnet-4-6",
+}
+for _gid, _a in AGENTS.items():
+    _a.setdefault("model", _MODEL.get(_gid, "claude-sonnet-4-6"))
+
+
 def get(agent_id):
     return AGENTS.get(agent_id)
 

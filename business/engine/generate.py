@@ -1,66 +1,97 @@
 #!/usr/bin/env python3
-"""Generation core for the fulfillment engine.
+"""Generation core — credit-efficient and redundant.
 
-If ANTHROPIC_API_KEY is set and the `anthropic` SDK is installed, this calls
-Claude (claude-opus-4-8, adaptive thinking, streaming) to produce the real
-deliverable. Otherwise it returns a structured offline draft so the engine
-always runs, is demoable, and never blocks on a missing key.
+Design choices (per the explicit "optimize for credit usage + redundancy" ask):
+- Per-gig model tiering: cheap models for simple work, stronger only where it
+  pays. Overridable per order. (This is the biggest credit lever.)
+- Prompt caching on the stable system prompt: repeat orders of the same gig
+  within the cache window read the prefix at ~0.1x instead of full price.
+- No extra thinking/effort tokens for straightforward content generation.
+- Redundancy: SDK auto-retries transient errors; on hard failure we fall back to
+  a cheaper model, then to an offline draft — an order is never lost to a blip.
+- Real per-order cost is measured from usage and returned for the ledger.
 
-Nothing here fabricates a *sale* — it produces the *work product* for an order
-you actually received.
+If ANTHROPIC_API_KEY + the `anthropic` SDK are present it calls Claude; else it
+returns an honest offline draft. Nothing here fabricates a sale.
 """
 import os
+from collections import namedtuple
 
-MODEL = "claude-opus-4-8"
+Result = namedtuple("Result", "text model cost")
+
+# $/1M tokens (input, output) — from the model catalog.
+PRICES = {
+    "claude-opus-4-8": (5.0, 25.0),
+    "claude-sonnet-4-6": (3.0, 15.0),
+    "claude-haiku-4-5": (1.0, 5.0),
+}
+DEFAULT_MODEL = "claude-opus-4-8"
 
 
-def _offline_draft(system_prompt, intake, gig_name):
-    """Deterministic, honest fallback when no API access is available."""
-    return (
+def _offline_draft(intake, gig_name):
+    return Result(
         f"[OFFLINE DRAFT — {gig_name}]\n"
         f"(Set ANTHROPIC_API_KEY and `pip install anthropic` to generate the "
-        f"real deliverable via {MODEL}.)\n\n"
-        f"This is the structured shell the engine produced from your intake. "
-        f"The production prompt below is what gets sent to Claude when a key is "
-        f"present; the intake is what fills it.\n\n"
-        f"----- INTAKE RECEIVED -----\n{intake.strip()}\n\n"
-        f"----- WHAT WILL BE PRODUCED -----\n"
-        f"A finished {gig_name} deliverable built to the spec in the production "
-        f"prompt, ready for your final spot-check before delivery.\n"
+        f"real deliverable.)\n\n"
+        f"Structured shell built from your intake — the production prompt fills "
+        f"in when a key is present.\n\n----- INTAKE -----\n{intake.strip()}\n",
+        "offline", 0.0,
     )
 
 
-def generate(system_prompt, intake, gig_name, max_tokens=8000):
-    """Return a finished deliverable string for one order."""
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        return _offline_draft(system_prompt, intake, gig_name)
+def _cost(model, usage):
+    pin, pout = PRICES.get(model, PRICES[DEFAULT_MODEL])
+    g = lambda a: getattr(usage, a, 0) or 0  # noqa: E731
+    return (g("input_tokens") * pin + g("output_tokens") * pout
+            + g("cache_read_input_tokens") * pin * 0.1
+            + g("cache_creation_input_tokens") * pin * 1.25) / 1_000_000
+
+
+def _call(client, model, system_prompt, user_msg, max_tokens):
+    # Cache the stable system prefix; stream so large outputs don't time out.
+    with client.messages.stream(
+        model=model,
+        max_tokens=max_tokens,
+        system=[{"type": "text", "text": system_prompt,
+                 "cache_control": {"type": "ephemeral"}}],
+        messages=[{"role": "user", "content": user_msg}],
+    ) as stream:
+        return stream.get_final_message()
+
+
+def generate(system_prompt, intake, gig_name,
+             model=DEFAULT_MODEL, max_tokens=8000,
+             fallback_model="claude-haiku-4-5"):
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        return _offline_draft(intake, gig_name)
     try:
         import anthropic
     except ImportError:
-        return _offline_draft(system_prompt, intake, gig_name)
+        return _offline_draft(intake, gig_name)
 
-    client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
+    client = anthropic.Anthropic(max_retries=3)  # auto-retry 429/5xx/network
     user_msg = (
         "Produce the complete, ready-to-deliver deliverable for this order. "
-        "Use only what the intake provides; where the intake is missing "
-        "something required, insert a clearly marked [NEEDS: ...] placeholder "
-        "rather than inventing facts.\n\n"
-        f"----- ORDER INTAKE -----\n{intake.strip()}"
+        "Use only what the intake provides; where something required is "
+        "missing, insert a clearly marked [NEEDS: ...] placeholder rather than "
+        "inventing facts.\n\n----- ORDER INTAKE -----\n" + intake.strip()
     )
-    # Streaming per the API guidance for potentially long outputs.
-    with client.messages.stream(
-        model=MODEL,
-        max_tokens=max_tokens,
-        thinking={"type": "adaptive"},
-        output_config={"effort": "high"},
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_msg}],
-    ) as stream:
-        message = stream.get_final_message()
 
-    if message.stop_reason == "refusal":
-        return ("[REFUSED] The model declined this request. Review the intake "
-                "for anything that tripped a safety classifier, or handle it "
-                "manually.")
-    return "".join(b.text for b in message.content if b.type == "text").strip()
+    for attempt_model in (model, fallback_model):  # redundancy: try, then fall back
+        try:
+            msg = _call(client, attempt_model, system_prompt, user_msg, max_tokens)
+        except Exception as e:  # noqa: BLE001 — any API/network failure
+            last_err = e
+            continue
+        if msg.stop_reason == "refusal":
+            return Result("[REFUSED] The model declined this order. Review the "
+                          "intake for anything that tripped a safety filter, or "
+                          "handle it manually.", attempt_model, _cost(attempt_model, msg.usage))
+        text = "".join(b.text for b in msg.content if b.type == "text").strip()
+        return Result(text, attempt_model, _cost(attempt_model, msg.usage))
+
+    # Both models failed — never drop the order.
+    draft = _offline_draft(intake, gig_name)
+    return Result(draft.text + f"\n\n[NOTE: live generation failed ({last_err}); "
+                  "offline draft returned so the order isn't lost.]",
+                  "offline", 0.0)

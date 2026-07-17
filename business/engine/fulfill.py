@@ -85,9 +85,11 @@ def cmd_fulfill(args):
     if not intake.strip():
         sys.exit("Empty intake. Pass a file or pipe the intake on stdin.")
 
-    print(f"Fulfilling '{a['name']}'…", file=sys.stderr)
-    deliverable = generate(a["system"], intake, a["name"],
-                           max_tokens=args.max_tokens)
+    model = args.model or a.get("model", "claude-sonnet-4-6")
+    print(f"Fulfilling '{a['name']}' via {model}…", file=sys.stderr)
+    result = generate(a["system"], intake, a["name"],
+                      model=model, max_tokens=args.max_tokens)
+    deliverable = result.text
 
     n = _next_index(args.gig)
     out_path = os.path.join(ORDERS_DIR, f"{args.gig}-{n}.md")
@@ -98,6 +100,8 @@ def cmd_fulfill(args):
         f.write(header + deliverable + "\n")
     _log_order(args.gig, out_path, len(deliverable))
     print(f"\n✅ Deliverable written to {out_path}")
+    if result.cost:
+        print(f"   Cost this order: ~${result.cost:.4f} ({result.model})")
     print("   Review it, then deliver it to the buyer and collect payment.")
     if args.price:
         _log_sale(args.gig, args.buyer, args.price, out_path)
@@ -226,6 +230,7 @@ def main():
     f.add_argument("--gig", required=True)
     f.add_argument("--intake", required=True, help="path or '-' for stdin")
     f.add_argument("--max-tokens", type=int, default=8000)
+    f.add_argument("--model", help="override the gig's model (e.g. claude-opus-4-8)")
     f.add_argument("--price", type=float, help="log a REAL paid sale of this amount")
     f.add_argument("--buyer", help="buyer name for the sales log (optional)")
     f.set_defaults(func=cmd_fulfill)

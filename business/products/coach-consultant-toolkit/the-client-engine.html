@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Client Engine — AI Toolkit for Coaches &amp; Consultants</title>
+<style>
+  :root{ --navy:#0f4c81; --navy-deep:#0a3559; --gold:#c8a45c; --ink:#1c2330;
+    --muted:#5a6473; --paper:#ffffff; --wash:#f4f6f9; --line:#e4e8ee; }
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--ink);background:var(--wash);
+    font:16px/1.6 Georgia,"Times New Roman",serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{max-width:820px;margin:0 auto;background:var(--paper)}
+  h1,h2,h3,.label,.pill,nav,th,.ey{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  /* Cover */
+  .cover{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-deep) 100%);color:#fff;
+    padding:64px 56px 52px;position:relative}
+  .cover .ey{letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--gold);font-weight:700}
+  .cover h1{font-family:Georgia,serif;font-size:44px;line-height:1.08;margin:14px 0 10px;color:#fff}
+  .cover .sub{font-size:18px;color:#d8e2ee;max-width:60ch}
+  .cover .rule{height:3px;width:72px;background:var(--gold);margin:22px 0}
+  .cover .meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:26px;font-family:-apple-system,Segoe UI,sans-serif;font-size:13px;color:#c9d6e5}
+  .cover .meta b{color:var(--gold);display:block;font-size:20px}
+  .cover .by{position:absolute;bottom:22px;right:56px;font-size:12px;color:#9fb3c9;font-family:-apple-system,Segoe UI,sans-serif;letter-spacing:.04em}
+  /* Body */
+  section{padding:40px 56px;border-top:1px solid var(--line)}
+  .eyebrow{font-family:-apple-system,Segoe UI,sans-serif;letter-spacing:.16em;text-transform:uppercase;
+    font-size:11px;color:var(--gold);font-weight:800}
+  h2{font-size:26px;color:var(--navy);margin:8px 0 6px;letter-spacing:-.01em}
+  h3{font-size:16px;color:var(--navy-deep);margin:22px 0 4px;font-weight:700}
+  p{margin:8px 0}
+  .muted{color:var(--muted)}
+  nav ol{margin:10px 0 0;padding-left:20px;columns:2;font-family:-apple-system,Segoe UI,sans-serif;font-size:14px}
+  nav li{margin:4px 0}
+  .promptcard{background:var(--wash);border:1px solid var(--line);border-left:3px solid var(--gold);
+    border-radius:8px;padding:13px 15px;margin:12px 0}
+  .promptcard .label{font-family:-apple-system,Segoe UI,sans-serif;font-weight:700;font-size:14px;color:var(--navy-deep);
+    display:flex;align-items:center;gap:8px}
+  .star{color:var(--gold)}
+  .promptcard .p{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12.5px;line-height:1.5;
+    color:#26303f;margin-top:7px;white-space:pre-wrap}
+  .fill{color:var(--navy);font-weight:700}
+  .example{background:#fbfaf6;border:1px solid #ece3cf;border-radius:8px;padding:16px 18px;margin:14px 0;font-size:14.5px}
+  .example .tag{font-family:-apple-system,Segoe UI,sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--gold);font-weight:800}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--navy);color:#fff;font-size:12px;letter-spacing:.04em}
+  .tmpl{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:#0e1a28;color:#dbe6f2;
+    border-radius:8px;padding:15px 17px;white-space:pre-wrap;line-height:1.55;margin:12px 0}
+  .callout{background:var(--navy);color:#eaf1f8;border-radius:10px;padding:18px 20px;margin:16px 0}
+  .callout b{color:var(--gold)}
+  .disclaimer{font-size:12.5px;color:var(--muted);font-style:italic}
+  footer{background:var(--navy-deep);color:#c9d6e5;padding:26px 56px;font-family:-apple-system,Segoe UI,sans-serif;font-size:13px}
+  footer b{color:var(--gold)}
+  @media print{ body{background:#fff} .page{max-width:none} section{page-break-inside:auto} .promptcard,.example,.tmpl{page-break-inside:avoid} }
+  @media (max-width:640px){ .cover,section,footer{padding-left:24px;padding-right:24px} nav ol{columns:1} .cover h1{font-size:34px} }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="cover">
+    <div class="ey">ShotByBiz · AI Toolkit Series</div>
+    <h1>The Client Engine</h1>
+    <div class="rule"></div>
+    <p class="sub">The AI system coaches &amp; consultants use to attract, close, and keep paying clients — 40 field-tested prompts wrapped in the strategy, examples, and templates that make them actually work.</p>
+    <div class="meta">
+      <div><b>40</b>prompts · 6 workflows</div>
+      <div><b>3</b>tested example outputs</div>
+      <div><b>3</b>fill-in templates</div>
+      <div><b>Any</b>AI (ChatGPT · Claude · Gemini)</div>
+    </div>
+    <div class="by">© ShotByBiz LLC</div>
+  </div>
+
+  <section>
+    <div class="eyebrow">Start here</div>
+    <h2>Why most coaches waste AI — and how this fixes it</h2>
+    <p>Most "prompt packs" hand you a list and leave. You paste a prompt, get generic output, and quietly stop using it. The problem was never the prompts — it's that a prompt with no <em>strategy</em> around it produces advice you can't sell with.</p>
+    <p><strong>The Client Engine is built around the six workflows that actually move money in a coaching or consulting business</strong> — not "content ideas," but the sequence that turns a stranger into a paying, renewing client. Each prompt is written to be filled in with your real offer and voice, each section tells you <em>why it works</em>, and you get tested example outputs so you know what "good" looks like before you send anything.</p>
+    <div class="callout"><b>How to get the most from it:</b> work the six workflows in order for one client, top to bottom. Fill every <span class="fill">{{bracket}}</span> with your real details — the more specific your input, the less generic the output. Star (<span class="star">★</span>) marks the biggest time-savers.</div>
+    <nav>
+      <div class="eyebrow">The six workflows</div>
+      <ol>
+        <li>Attract — pull in ideal clients</li>
+        <li>Convert — discovery calls &amp; proposals</li>
+        <li>Offer — package &amp; price it</li>
+        <li>Onboard — a kickoff they rave about</li>
+        <li>Deliver — sessions that get results</li>
+        <li>Retain &amp; Refer — renewals, testimonials, referrals</li>
+      </ol>
+    </nav>
+  </section>
+
+  <!-- 1 ATTRACT -->
+  <section>
+    <div class="eyebrow">Workflow 1</div>
+    <h2>Attract — pull in ideal clients</h2>
+    <p class="muted">Goal: stop chasing. Produce content and lead magnets that make the right people raise their hand. <b>Why it works:</b> AI is strongest when it starts from a sharp picture of one person's pain — so every prompt here forces you to name the exact client and problem first.</p>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> Ideal-client pain map</div>
+      <div class="p">Act as a positioning strategist. My coaching niche is <span class="fill">{{niche}}</span> and my ideal client is <span class="fill">{{who they are}}</span>. List the top 7 problems they lie awake worrying about, the exact words they'd use to describe each (not jargon), and the one outcome they'd pay almost anything for. Rank by how urgently they'd act.</div></div>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> 30-day content calendar</div>
+      <div class="p">You are my content strategist. Using this pain list — <span class="fill">{{paste pains}}</span> — build a 30-day content calendar (3 posts/week) for <span class="fill">{{platform}}</span>. For each: a hook line, the core idea, and the single action I want the reader to take. Vary formats (story, myth-bust, quick win, case snapshot).</div></div>
+
+    <div class="promptcard"><div class="label">Scroll-stopping hooks</div>
+      <div class="p">Write 15 first-line hooks for a post about <span class="fill">{{topic}}</span> aimed at <span class="fill">{{ideal client}}</span>. Make them specific and curiosity-driven, no clickbait. Avoid "In today's world" and any cliché opener.</div></div>
+
+    <div class="promptcard"><div class="label">Lead magnet that pre-sells</div>
+      <div class="p">Design a free lead magnet for <span class="fill">{{ideal client}}</span> that solves one painful micro-problem in under 10 minutes and naturally leads them to want my paid help with <span class="fill">{{bigger problem}}</span>. Give me the title, the outline, and the one-sentence promise.</div></div>
+
+    <div class="promptcard"><div class="label">Signature framework namer</div>
+      <div class="p">I help clients <span class="fill">{{transformation}}</span> using this process: <span class="fill">{{your steps}}</span>. Package it into a memorable named framework (3–5 steps, each a short verb-led phrase) I can teach and be known for. Give 5 name options.</div></div>
+
+    <div class="promptcard"><div class="label">DM opener that isn't creepy</div>
+      <div class="p">Write 5 warm, non-salesy DM openers to start a real conversation with someone who engaged with my post about <span class="fill">{{topic}}</span>. The goal is a genuine reply, not a pitch. Keep each under 30 words.</div></div>
+
+    <div class="promptcard"><div class="label">Repurpose one idea 6 ways</div>
+      <div class="p">Take this single idea — <span class="fill">{{idea}}</span> — and turn it into: a short-form video script, a carousel outline, an email, a LinkedIn post, a one-line tweet, and a lead-magnet section. Keep my voice: <span class="fill">{{tone}}</span>.</div></div>
+  </section>
+
+  <!-- 2 CONVERT -->
+  <section>
+    <div class="eyebrow">Workflow 2</div>
+    <h2>Convert — discovery calls &amp; proposals</h2>
+    <p class="muted">Goal: turn interested people into paying clients without feeling "salesy." <b>Why it works:</b> conversion is a structure problem, not a charisma problem — these give you the questions, the framing, and the follow-up that make the yes feel obvious.</p>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> Discovery-call script</div>
+      <div class="p">Build me a discovery-call script for <span class="fill">{{ideal client}}</span> seeking <span class="fill">{{outcome}}</span>. Structure: rapport → their current situation → the gap and its cost → the desired outcome → whether my <span class="fill">{{offer}}</span> fits → clear next step. Give the exact questions, and note where to shut up and listen.</div></div>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> Objection responses</div>
+      <div class="p">A prospect said: "<span class="fill">{{objection}}</span>." Give me 3 honest, non-pushy ways to respond that acknowledge them, reframe the real issue, and move the decision forward. No manipulation.</div></div>
+
+    <div class="promptcard"><div class="label">Proposal from call notes</div>
+      <div class="p">Turn these discovery-call notes — <span class="fill">{{notes}}</span> — into a one-page proposal: their goal in their words, what we'll do, the outcome, the investment (<span class="fill">{{price}}</span>), and a single clear next step. Confident, concise, no fluff.</div></div>
+
+    <div class="promptcard"><div class="label">The follow-up sequence</div>
+      <div class="p">Write a 3-message follow-up sequence for a warm prospect who went quiet after a good call. Message 1 (value + soft nudge), 2 (address likely hesitation about <span class="fill">{{concern}}</span>), 3 (respectful last check). Keep each short and human.</div></div>
+
+    <div class="promptcard"><div class="label">Price-anchor explainer</div>
+      <div class="p">Help me explain the value of my <span class="fill">{{price}}</span> offer to <span class="fill">{{ideal client}}</span> by anchoring it against the cost of <em>not</em> solving <span class="fill">{{problem}}</span>. Give me 3 framings I can say out loud naturally.</div></div>
+
+    <div class="promptcard"><div class="label">Qualify-out politely</div>
+      <div class="p">Write a kind, professional message to decline working with a poor-fit prospect (<span class="fill">{{why not a fit}}</span>) while preserving the relationship and, where possible, pointing them to a better resource.</div></div>
+  </section>
+
+  <!-- 3 OFFER -->
+  <section>
+    <div class="eyebrow">Workflow 3</div>
+    <h2>Offer — package &amp; price it</h2>
+    <p class="muted">Goal: a clear, confident offer people understand in one read. <b>Why it works:</b> confused buyers don't buy; these prompts force one outcome, one path, one price.</p>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> Signature offer builder</div>
+      <div class="p">Design my core coaching offer for <span class="fill">{{ideal client}}</span> who wants <span class="fill">{{outcome}}</span>. Give: a compelling name, the promised result and timeframe, what's included (sessions, support, materials), who it's NOT for, and a one-sentence pitch. Keep it to one transformation.</div></div>
+
+    <div class="promptcard"><div class="label">Three-tier ladder</div>
+      <div class="p">Turn my offer into 3 tiers (entry, core, premium) with clear differences in access and outcome, priced around <span class="fill">{{core price}}</span>. Make the middle tier the obvious best value.</div></div>
+
+    <div class="promptcard"><div class="label">Offer one-pager copy</div>
+      <div class="p">Write the sales one-pager for <span class="fill">{{offer name}}</span>: headline, the problem, the promise, what's inside, who it's for, proof placeholder, price, and CTA. Voice: <span class="fill">{{tone}}</span>.</div></div>
+
+    <div class="promptcard"><div class="label">Guarantee that de-risks</div>
+      <div class="p">Propose 3 fair, honest guarantee options for my <span class="fill">{{offer}}</span> that lower the buyer's risk without exposing me to abuse. Explain the tradeoff of each.</div></div>
+
+    <div class="promptcard"><div class="label">Name the transformation</div>
+      <div class="p">My clients go from <span class="fill">{{before state}}</span> to <span class="fill">{{after state}}</span>. Give me 10 ways to describe that transformation in the client's own language for use in titles and headlines.</div></div>
+
+    <div class="promptcard"><div class="label">Upsell / continuation path</div>
+      <div class="p">After a client finishes <span class="fill">{{offer}}</span>, what's the natural next offer that keeps them progressing? Design it and write the one-line invitation I'd give them near the end of our engagement.</div></div>
+
+    <div class="promptcard"><div class="label">Entry (tripwire) offer</div>
+      <div class="p">Design a low-risk entry offer (a paid intro session, audit, or mini-program) that lets a hesitant <span class="fill">{{ideal client}}</span> experience my work for <span class="fill">{{low price}}</span> and naturally leads into <span class="fill">{{core offer}}</span>. Give the name, what's included, and the one-line pitch.</div></div>
+  </section>
+
+  <!-- 4 ONBOARD -->
+  <section>
+    <div class="eyebrow">Workflow 4</div>
+    <h2>Onboard — a kickoff they rave about</h2>
+    <p class="muted">Goal: the first 7 days set the tone for the whole engagement. <b>Why it works:</b> a smooth, confident onboarding reduces refunds and buyer's remorse and turns new clients into future testimonials.</p>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> Welcome + intake email</div>
+      <div class="p">Write a warm welcome email for a new <span class="fill">{{offer}}</span> client. Confirm what happens next, set expectations, and include a short intake questionnaire (5–7 questions) that gets me everything I need to make session one great.</div></div>
+
+    <div class="promptcard"><div class="label">Kickoff session agenda</div>
+      <div class="p">Build a 60-minute kickoff-session agenda for <span class="fill">{{offer}}</span>: goals, current reality, quick early win, roadmap, and how we'll measure progress. Include time blocks.</div></div>
+
+    <div class="promptcard"><div class="label">Client goal-setting worksheet</div>
+      <div class="p">Create a goal-setting worksheet a new client fills before session one, covering their #1 outcome, obstacles, past attempts, and what success looks like in <span class="fill">{{timeframe}}</span>.</div></div>
+
+    <div class="promptcard"><div class="label">Expectations &amp; boundaries note</div>
+      <div class="p">Draft a friendly "how we'll work together" note covering communication channels, response times, rescheduling, and what's in/out of scope for <span class="fill">{{offer}}</span>. Warm but clear.</div></div>
+
+    <div class="promptcard"><div class="label">First quick-win plan</div>
+      <div class="p">Based on this client's intake — <span class="fill">{{intake}}</span> — design one fast, meaningful win they can achieve in week one so they feel momentum immediately.</div></div>
+
+    <div class="promptcard"><div class="label">Onboarding checklist</div>
+      <div class="p">Give me a step-by-step onboarding checklist (my side + client side) for the first 7 days of <span class="fill">{{offer}}</span>, so nothing falls through the cracks.</div></div>
+  </section>
+
+  <!-- 5 DELIVER -->
+  <section>
+    <div class="eyebrow">Workflow 5</div>
+    <h2>Deliver — sessions that get results</h2>
+    <p class="muted">Goal: show up prepared, coach deeper, and make progress visible. <b>Why it works:</b> AI is a tireless prep partner and thinking amplifier — it never replaces your judgment, it sharpens it.</p>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> Session prep from last notes</div>
+      <div class="p">Here are my notes from the last session: <span class="fill">{{notes}}</span>. Prep me for the next one: what to follow up on, 3 powerful questions to ask, likely blockers, and a suggested focus. I'll adapt live.</div></div>
+
+    <div class="promptcard"><div class="label">Powerful coaching questions</div>
+      <div class="p">Give me 12 open, non-leading coaching questions to help a client stuck on <span class="fill">{{issue}}</span> reach their own insight. Group by: clarify → challenge → commit.</div></div>
+
+    <div class="promptcard"><div class="label">Custom framework / exercise</div>
+      <div class="p">Design a simple exercise or worksheet to help a client work through <span class="fill">{{challenge}}</span> between sessions. Make it doable in 20 minutes and easy to debrief next time.</div></div>
+
+    <div class="promptcard"><div class="label">Reframe a stuck belief</div>
+      <div class="p">A client keeps saying "<span class="fill">{{limiting belief}}</span>." Give me 3 respectful reframes and a question for each that invites them to test the belief rather than defend it.</div></div>
+
+    <div class="promptcard"><div class="label">Progress recap for the client</div>
+      <div class="p">Turn these session notes — <span class="fill">{{notes}}</span> — into a short, encouraging recap for the client: what we covered, their wins, their action steps, and one thing to notice this week.</div></div>
+
+    <div class="promptcard"><div class="label">Accountability check-in</div>
+      <div class="p">Write a brief mid-week check-in message for a client working toward <span class="fill">{{goal}}</span> that holds them accountable warmly without nagging.</div></div>
+
+    <div class="promptcard"><div class="label">Resource curator</div>
+      <div class="p">Suggest 5 high-quality resources (book, article, exercise, tool, habit) relevant to a client working on <span class="fill">{{topic}}</span>, with a one-line reason each is worth their time.</div></div>
+  </section>
+
+  <!-- 6 RETAIN -->
+  <section>
+    <div class="eyebrow">Workflow 6</div>
+    <h2>Retain &amp; Refer — renewals, testimonials, referrals</h2>
+    <p class="muted">Goal: turn great outcomes into recurring revenue and a referral flywheel. <b>Why it works:</b> your happiest clients are your cheapest marketing — these prompts make asking natural and easy.</p>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> Renewal / continuation offer</div>
+      <div class="p">My client is finishing <span class="fill">{{offer}}</span> and has made this progress: <span class="fill">{{results}}</span>. Write a warm, no-pressure message inviting them to continue with <span class="fill">{{next offer}}</span>, tied to the momentum they've built.</div></div>
+
+    <div class="promptcard"><div class="label"><span class="star">★</span> Testimonial request that gets a yes</div>
+      <div class="p">Write a short message asking a happy client for a testimonial, with 4 guiding questions so they know exactly what to say (their before, the turning point, the result, who they'd recommend it to). Make it 2-minute-easy.</div></div>
+
+    <div class="promptcard"><div class="label">Turn a testimonial into a case study</div>
+      <div class="p">Turn this raw testimonial — <span class="fill">{{quote}}</span> — into a short, believable case-study snippet (challenge → what we did → result) I can use in marketing. Keep their voice; don't exaggerate.</div></div>
+
+    <div class="promptcard"><div class="label">Referral ask</div>
+      <div class="p">Write a natural referral request for a satisfied client: acknowledge their result, describe exactly who I'm a great fit for, and make introducing me effortless. No bribery-feeling incentives unless I add one.</div></div>
+
+    <div class="promptcard"><div class="label">Win-back a past client</div>
+      <div class="p">Draft a genuine re-engagement message to a past client I haven't spoken to in <span class="fill">{{time}}</span>, referencing their goal of <span class="fill">{{goal}}</span> and offering a relevant next step. Warm, not desperate.</div></div>
+
+    <div class="promptcard"><div class="label">Off-boarding that leaves the door open</div>
+      <div class="p">Write a closing message for a client wrapping up <span class="fill">{{offer}}</span>: celebrate their progress, summarize how far they've come, and leave a clear, welcoming path back.</div></div>
+
+    <div class="promptcard"><div class="label">Quarterly client-love audit</div>
+      <div class="p">Give me a 6-point checklist to run quarterly to keep current clients feeling seen and supported so retention stays high.</div></div>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section>
+    <div class="eyebrow">Proof it works</div>
+    <h2>3 tested example outputs</h2>
+    <p class="muted">Here's what these prompts actually produce, so you know the quality before you use them. (Filled with a sample "confidence coach for new managers" niche.)</p>
+
+    <div class="example"><div class="tag">From: Ideal-client pain map</div>
+      <p><strong>Top 3 lie-awake problems for new managers:</strong> (1) "I got promoted for my work, now I'm judged on my team's — and I don't know how to lead people I used to sit beside." (2) "I avoid the hard conversation until it explodes." (3) "I'm working nights to keep up because I can't delegate without feeling I've dumped on someone." <strong>Would-pay-anything outcome:</strong> "Walk into any 1:1 or tough conversation feeling calm and in control." <em>Most urgent:</em> #2 — it's actively costing them respect right now.</p></div>
+
+    <div class="example"><div class="tag">From: Discovery-call script (excerpt)</div>
+      <p><strong>The gap &amp; its cost:</strong> "You said you avoid the tough conversations until they blow up. What's that costing you — in your team's trust, and in your own stress?" <em>(then stop and listen)</em> … <strong>Next step:</strong> "Based on what you've shared, the 8-week Confident Manager track is built for exactly this. Want me to walk you through how it'd work for your situation?"</p></div>
+
+    <div class="example"><div class="tag">From: Testimonial request</div>
+      <p>"Hi Sam — I'd love to capture what you've built these past weeks. Could you answer these 4 quick questions? (1) What was hardest before we started? (2) What shifted? (3) What's different now for your team? (4) Who would you tell to do this? Two minutes, and it means the world."</p></div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section>
+    <div class="eyebrow">Fill-in templates</div>
+    <h2>3 templates you'll reuse forever</h2>
+
+    <h3>1 · Discovery-call one-page cheat sheet</h3>
+    <div class="tmpl">CLIENT: __________   DATE: ______
+1. RAPPORT  — one genuine opener: __________
+2. SITUATION — "Walk me through where things stand with {{problem}}."
+3. GAP + COST — "What's it costing you to leave this unsolved?"  (LISTEN)
+4. OUTCOME — "If this were handled, what changes for you?"
+5. FIT — "Here's how {{offer}} maps to that…"
+6. NEXT STEP — one clear action + date: __________</div>
+
+    <h3>2 · Offer one-pager skeleton</h3>
+    <div class="tmpl">[NAME OF OFFER]
+Headline: the outcome, in their words
+For: {{ideal client}}   Not for: {{who it's not}}
+The promise: {{result}} in {{timeframe}}
+What's inside: • ___ • ___ • ___
+Proof: [testimonial / result]
+Investment: {{price}}   →   Next step: {{CTA}}</div>
+
+    <h3>3 · Weekly client tracker</h3>
+    <table>
+      <tr><th>Client</th><th>Goal</th><th>Last session</th><th>Action owed</th><th>Renewal date</th><th>Testimonial?</th></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    </table>
+  </section>
+
+  <!-- USAGE -->
+  <section>
+    <div class="eyebrow">Quick-start</div>
+    <h2>How to use this toolkit</h2>
+    <p><strong>1.</strong> Open any AI assistant — ChatGPT, Claude, or Gemini all work. <strong>2.</strong> Copy a prompt and replace every <span class="fill">{{bracket}}</span> with your real details. <strong>3.</strong> If the first output is generic, tell the AI what's off ("more specific to new managers," "warmer tone") — it improves fast. <strong>4.</strong> Work the six sections in order for one client to feel the full engine. <strong>5.</strong> Save your best filled-in prompts — they become your personal library.</p>
+    <p class="disclaimer">Created with the assistance of AI tools, disclosed per marketplace creativity standards. This toolkit is a productivity resource, not professional, legal, financial, or therapeutic advice. Always review AI output and adapt it to your client and situation before using or sending it.</p>
+  </section>
+
+  <footer>
+    <b>The Client Engine</b> — AI Toolkit for Coaches &amp; Consultants · © ShotByBiz LLC ·
+    Free lifetime updates. Enjoying it? A quick review helps another coach find it.
+  </footer>
+
+</div>
+</body>
+</html>

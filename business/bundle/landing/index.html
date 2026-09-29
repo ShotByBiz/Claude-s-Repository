@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NeverMiss — Answer Every Call. Keep Every Appointment.</title>
+<style>
+  :root{--bg:#0b1120;--card:#121a2e;--ink:#e8eefc;--mut:#9fb0d0;--acc:#4f8cff;--ok:#33d39b;--warn:#ffb454}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px}
+  header{padding:18px 0;display:flex;justify-content:space-between;align-items:center}
+  .brand{font-weight:800}.brand span{color:var(--acc)}
+  .hero{padding:60px 0 36px;text-align:center}
+  .hero h1{font-size:clamp(30px,6vw,50px);margin:.2em 0;line-height:1.1}
+  .hero p{color:var(--mut);font-size:19px;max-width:640px;margin:14px auto 26px}
+  .cta{display:inline-block;background:var(--acc);color:#fff;text-decoration:none;font-weight:700;padding:14px 26px;border-radius:10px}
+  .cta.ghost{background:transparent;border:1px solid #2a3a5e;color:var(--ink);margin-left:8px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:30px 0}
+  @media(max-width:640px){.two{grid-template-columns:1fr}}
+  .leak{background:var(--card);border:1px solid #1e2a45;border-radius:14px;padding:22px}
+  .leak h3{margin:.1em 0;font-size:19px}
+  .leak .tag{font-size:12px;color:var(--warn);text-transform:uppercase;letter-spacing:.08em}
+  .leak p{color:var(--mut)}
+  section{padding:38px 0;border-top:1px solid #16203a}
+  h2{font-size:26px}
+  .calc{background:var(--card);border:1px solid #1e2a45;border-radius:14px;padding:22px;margin-top:14px}
+  .calc label{display:block;color:var(--mut);font-size:14px;margin:10px 0 4px}
+  .calc input{width:100%;padding:10px;border-radius:8px;border:1px solid #2a3a5e;background:#0d1526;color:var(--ink)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+  .total{margin-top:18px;font-size:19px}.total b{color:var(--ok);font-size:30px}
+  .price{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+  @media(max-width:640px){.price{grid-template-columns:1fr}}
+  .tier{background:var(--card);border:1px solid #1e2a45;border-radius:14px;padding:20px;text-align:center}
+  .tier.feature{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+  .tier .amt{font-size:30px;font-weight:800}.tier .amt small{font-size:13px;color:var(--mut);font-weight:400}
+  .tier ul{list-style:none;padding:0;margin:12px 0;color:var(--mut);text-align:left;font-size:14px}
+  .tier li:before{content:"✓ ";color:var(--ok)}
+  .disc{color:#6f80a0;font-size:13px}
+  footer{padding:28px 0;color:#6f80a0;font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="brand">Never<span>Miss</span></div><a class="cta" href="#pricing">See pricing</a></header>
+
+  <div class="hero">
+    <h1>Answer every call. Keep every appointment.</h1>
+    <p>One service that plugs both holes in your schedule: an AI receptionist that
+       catches the calls you miss, and a reminder system that saves the bookings
+       you'd lose to no-shows.</p>
+    <a class="cta" href="#calc">See what you're losing</a>
+    <a class="cta ghost" href="#pricing">Pricing</a>
+  </div>
+
+  <div class="two">
+    <div class="leak"><div class="tag">Leak #1 — missed calls</div>
+      <h3>The calls you never hear</h3>
+      <p>Lunch, after hours, front desk slammed — each missed call is a customer
+         who calls the next business instead. We answer 24/7 and book them.</p></div>
+    <div class="leak"><div class="tag">Leak #2 — no-shows</div>
+      <h3>The bookings that vanish</h3>
+      <p>A no-show is a slot you can't resell. Smart confirmations and reschedule
+         offers keep those appointments — or refill them from a waitlist.</p></div>
+  </div>
+
+  <section id="calc">
+    <h2>Your two leaks, in dollars</h2>
+    <div class="calc">
+      <div class="grid2">
+        <div>
+          <strong>Missed calls</strong>
+          <label>Calls/day <input id="cpd" type="number" value="20"></label>
+          <label>% missed <input id="miss" type="number" value="27"></label>
+          <label>Avg new-customer value $ <input id="val" type="number" value="300"></label>
+          <label>% who book <input id="close" type="number" value="40"></label>
+        </div>
+        <div>
+          <strong>No-shows</strong>
+          <label>Appointments/week <input id="apw" type="number" value="80"></label>
+          <label>No-show % now <input id="ns" type="number" value="20"></label>
+          <label>Value per slot $ <input id="slot" type="number" value="180"></label>
+          <label>We cut no-shows to (%) <input id="nsa" type="number" value="8"></label>
+        </div>
+      </div>
+      <div class="total">Together you're losing about <b id="out">$0</b>/month.</div>
+      <p class="disc">Estimate from your inputs (22 business days; 4.33 weeks). Real
+         numbers vary — that's what the live demo is for.</p>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2>One service, two protections</h2>
+    <div class="price">
+      <div class="tier"><h3>Core</h3><div class="amt">$297<small>/mo</small></div>
+        <ul><li>24/7 AI receptionist</li><li>Booking + FAQ</li><li>Message capture</li></ul></div>
+      <div class="tier feature"><h3>Plus</h3><div class="amt">$397<small>/mo</small></div>
+        <ul><li>Everything in Core</li><li>Appointment reminders</li><li>Reschedule + no-show recovery</li><li>Weekly value report</li></ul>
+        <a class="cta" href="#demo">Start with Plus</a></div>
+      <div class="tier"><h3>Premium</h3><div class="amt">$597<small>/mo</small></div>
+        <ul><li>Everything in Plus</li><li>SMS follow-up</li><li>Waitlist auto-fill</li><li>2 numbers + monthly report</li></ul></div>
+    </div>
+    <p class="disc">No contracts. 14-day guarantee. Cancel anytime.</p>
+  </section>
+
+  <section id="demo">
+    <h2>Hear it for yourself</h2>
+    <p style="color:var(--mut)">Call the demo line and book a (fake) appointment like a
+       customer would. Two minutes, no signup.</p>
+    <p><a class="cta" href="tel:+10000000000">Call the demo: (set your number)</a></p>
+    <p class="disc">Replace with your provider number before publishing.</p>
+  </section>
+</div>
+
+<footer><div class="wrap">NeverMiss · AI Receptionist + Reminders · Customizable
+  sales page template. Add your business details and a CAN-SPAM mailing address
+  before going live.</div></footer>
+
+<script>
+  function n(id){return +document.getElementById(id).value||0;}
+  function fmt(x){return "$"+Math.round(x).toLocaleString();}
+  function calc(){
+    var callLoss = n('cpd')*(n('miss')/100)*22*(n('close')/100)*n('val');
+    var nsLoss = n('apw')*4.33*((n('ns')-n('nsa'))/100)*n('slot');
+    document.getElementById('out').textContent = fmt(callLoss + Math.max(0,nsLoss));
+  }
+  ['cpd','miss','val','close','apw','ns','slot','nsa'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',calc);});
+  calc();
+</script>
+</body>
+</html>

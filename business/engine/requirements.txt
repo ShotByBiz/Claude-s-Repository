@@ -1,0 +1,3 @@
+# Only dependency needed to run the engine LIVE (calls Claude).
+# The engine also runs with zero dependencies in OFFLINE draft mode.
+anthropic>=0.40
